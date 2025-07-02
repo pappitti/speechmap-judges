@@ -1,6 +1,6 @@
 # LLM Assessment Explorer
 
-<video src="https://pitti-backend-assets.ams3.cdn.digitaloceanspaces.com/speechmap/speechmap-judges-overview.mp4" title="Speechmap-judges Demo" width="320" height="240" controls></video>
+[Speechmap-judges Demo](https://github.com/user-attachments/assets/97da33fe-b033-4de5-886f-06fda8a0534c)
 
 An interactive TypeScript app for exploring and comparing differences in Large Language Model (LLM) assessments. This tool helps visualize how different "judge" models classify the same LLM-generated responses, providing deep insights into inter-rater reliability and model behavior.
 
