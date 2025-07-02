@@ -1,12 +1,7 @@
 import { CATEGORIES, COLOR_MAP } from '../utils/chartUtils.js';
-import type { TransitionMatrix } from '../types';
+import type { HeatmapProps } from '../types';
 
-interface HeatmapProps {
-  matrix: TransitionMatrix;
-  judge1: string;
-  judge2: string;
-  onCellClick: (fromCategory: string, toCategory: string) => void;
-}
+
 
 const Heatmap: React.FC<HeatmapProps> = ({ matrix, judge1, judge2, onCellClick }) => {
   const maxValue = Math.max(

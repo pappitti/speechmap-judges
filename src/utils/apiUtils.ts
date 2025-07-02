@@ -1,8 +1,6 @@
-import type { Theme, TransitionMatrix, AssessmentItem } from '../types.js';
+import type { Theme, TransitionMatrix, AssessmentItem, ApiError } from '../types.js';
 
-interface ApiError {
-  error: string;
-}
+
 
 // This helper centralizes our fetch logic and error handling.
 async function fetchAPI<T>(url: string, options?: RequestInit): Promise<T> {

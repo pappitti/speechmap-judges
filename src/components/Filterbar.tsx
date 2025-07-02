@@ -1,15 +1,4 @@
-import type { Theme } from '../types.js';
-
-interface FilterBarProps {
-  themes: Theme[];
-  judges: string[];
-  selectedTheme: string;
-  onThemeChange: (value: string) => void;
-  selectedJudge1: string;
-  onJudge1Change: (value: string) => void;
-  selectedJudge2: string;
-  onJudge2Change: (value: string) => void;
-}
+import type { FilterBarProps } from '../types.js';
 
 const FilterBar: React.FC<FilterBarProps> = ({
   themes,

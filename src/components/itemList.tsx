@@ -1,12 +1,5 @@
 import ReactMarkdown from 'react-markdown';
-import type { AssessmentItem } from '../types';
-
-interface AssessmentItemsProps {
-  judge1: string;
-  judge2: string;
-  items: AssessmentItem[];
-  selectedCategory: string | null;
-}
+import type { AssessmentItemsProps } from '../types';
 
 const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items, selectedCategory }) => {
   if (!selectedCategory || items.length === 0) {
@@ -20,7 +13,7 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items
 
   return (
     <div className="assessment-items">
-      <h3>Assessment Details - {selectedCategory}</h3>
+      <h3>Assessment Details - {`${selectedCategory[0]} → ${selectedCategory[1]}`}</h3>
       <div className="items-list">
         {items.map((item, index) => (
           <div key={index} className="assessment-item">

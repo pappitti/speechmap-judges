@@ -51,3 +51,50 @@ export interface AssessmentItem {
   model: string;
   assessments: Record<string,JudgeAssessment>;
 }
+
+export interface FilterBarProps {
+  themes: Theme[];
+  judges: string[];
+  selectedTheme: string;
+  onThemeChange: (value: string) => void;
+  selectedJudge1: string;
+  onJudge1Change: (value: string) => void;
+  selectedJudge2: string;
+  onJudge2Change: (value: string) => void;
+}
+
+export interface AssessmentItemsProps {
+  judge1: string;
+  judge2: string;
+  items: AssessmentItem[];
+  selectedCategory: string[] | null;
+}
+
+export interface Segment {
+  category_label: string;
+  value: number;
+  fromCategory?: string; // Optional for flow bars
+}
+
+export interface PlotStage {
+  stage_name: string;
+  segments: Segment[];
+}
+
+export interface HeatmapProps {
+  matrix: TransitionMatrix;
+  judge1: string;
+  judge2: string;
+  onCellClick: (fromCategory: string, toCategory: string) => void;
+}
+
+export interface WaterfallProps {
+  matrix: TransitionMatrix;
+  judge1: string;
+  judge2: string;
+  onCellClick: (fromCategory: string, toCategory: string) => void;
+}
+
+export interface ApiError {
+  error: string;
+}

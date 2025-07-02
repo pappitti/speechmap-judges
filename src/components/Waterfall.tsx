@@ -1,16 +1,10 @@
 import { COLOR_MAP, generateWaterfallData } from '../utils/chartUtils.js';
-import type { TransitionMatrix } from '../types';
-
-interface WaterfallProps {
-  matrix: TransitionMatrix;
-  judge1: string;
-  judge2: string;
-}
+import type { WaterfallProps } from '../types';
 
 // Shorten judge names for display if they are long
 const shortenName = (name: string) => name.split('/')[1] || name;
 
-const Waterfall: React.FC<WaterfallProps> = ({ matrix, judge1, judge2 }) => {
+const Waterfall: React.FC<WaterfallProps> = ({ matrix, judge1, judge2, onCellClick }) => {
     const totalCount = Object.values(matrix).reduce((sum, fromCat) => {
         return sum + Object.values(fromCat).reduce((innerSum, count) => innerSum + count, 0);
     }, 0);
@@ -30,7 +24,7 @@ const Waterfall: React.FC<WaterfallProps> = ({ matrix, judge1, judge2 }) => {
                     return (
                     <div key={stage_name} className="waterfall-bar-container">
                         {stage.segments.map(segment => {
-                            const { category_label, value } = segment;
+                            const { category_label, value, fromCategory } = segment;
                             const count = value || 0;
                             const height = (count / totalCount) * 100;
                             const color = COLOR_MAP[category_label] || 'rgba(0,0,0,0)'; // Default to transparent if not found
@@ -41,8 +35,10 @@ const Waterfall: React.FC<WaterfallProps> = ({ matrix, judge1, judge2 }) => {
                                     style={{
                                         height: `${height}%`,
                                         backgroundColor: color,
+                                        cursor: fromCategory ? 'pointer' : 'default',
                                     }}
-                                    title={`${category_label} (${count})`} 
+                                    title={`${category_label} (${count})`}
+                                    onClick={() => fromCategory && onCellClick(fromCategory, category_label)}
                                 >
                                 {(count > 0 && category_label != 'BASE' && stage_name.includes('→')) && <span className="bar-value">{count}</span>}
                             </div>

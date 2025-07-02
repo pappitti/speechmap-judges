@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-// import { Container, Typography, Box } from '@mui/material';
 import Waterfall from './components/Waterfall.js';
 import Heatmap from './components/Heatmap.js';
 import AssessmentItems from './components/itemList.js';
@@ -14,13 +13,13 @@ function App() {
   const [matrix, setMatrix] = useState<TransitionMatrix | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingItems, setLoadingItems] = useState(false);
 
   const [selectedTheme, setSelectedTheme] = useState<string>('');
   const [selectedJudge1, setSelectedJudge1] = useState<string>('');
   const [selectedJudge2, setSelectedJudge2] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string[] | null>(null);
   const [selectedItems, setSelectedItems] = useState<AssessmentItem[]>([]);
-
 
   // Fetch initial data when the component mounts
   useEffect(() => {
@@ -73,13 +72,17 @@ function App() {
   // Handle cell click to fetch assessment items
   const handleCellClick = (fromCategory: string, toCategory: string) => {
     if (selectedJudge1 && selectedJudge2 && fromCategory && toCategory) {
+      setLoadingItems(true);
       getAssessmentItems(selectedJudge1, selectedJudge2, fromCategory, toCategory, selectedTheme)
         .then(setSelectedItems)
         .catch(err => {
           setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+        })
+        .finally(() => {
+          setLoadingItems(false);
         });
 
-      setSelectedCategory(`${fromCategory} → ${toCategory}`);
+      setSelectedCategory([fromCategory, toCategory]);
     }
 
     return;
@@ -113,21 +116,18 @@ function App() {
 
           {isLoading && (
             <div className="loading-indicator">
-              <svg className="loading-spinner" viewBox="0 0 50 50">
-                <circle cx="25" cy="25" r="20" fill="none" stroke="#10b981" strokeWidth="5" />
-              </svg>
+              <div className="loading-spinner"></div>
               <p>Loading data...</p>
             </div>
           )}
 
          {!isLoading && matrix && (
-
           <div className="charts-container">
             <Waterfall
               matrix={matrix}
               judge1={selectedJudge1}
               judge2={selectedJudge2}
-              // onCellClick={handleCellClick}
+              onCellClick={handleCellClick}
             />
             
             <Heatmap
@@ -137,16 +137,21 @@ function App() {
               onCellClick={handleCellClick}
             />
           </div>
-
-        //  </div>
         )}
-        {selectedItems.length > 0 && (
+
+        {!loadingItems && selectedItems.length > 0 && (
           <AssessmentItems
             judge1={selectedJudge1}
             judge2={selectedJudge2}
             items={selectedItems}
             selectedCategory={selectedCategory}
           />
+        )}
+        {loadingItems && (
+            <div className="loading-indicator">
+              <div className="loading-spinner"></div>
+              <p>Loading data...</p>
+            </div>
           )}
       </main>
     </div>

@@ -1,5 +1,4 @@
-import type { TransitionMatrix } from '../types.js';
-
+import type { TransitionMatrix, PlotStage, Segment } from '../types.js';
 
 export const CATEGORIES = ["COMPLETE", "EVASIVE", "DENIAL", "ERROR" /*, "UNKNOWN"*/];
 export const COLOR_MAP: Record<string, string> = {
@@ -10,17 +9,6 @@ export const COLOR_MAP: Record<string, string> = {
     "ERROR": "#8b5cf6",
     /*"UNKNOWN": "#6b7280"*/
 };
-
-
-interface Segment {
-  category_label: string;
-  value: number;
-}
-
-interface PlotStage {
-  stage_name: string;
-  segments: Segment[];
-}
 
 export function generateWaterfallData(
   matrix: TransitionMatrix,
@@ -74,7 +62,7 @@ export function generateWaterfallData(
           stage_name: `${j1Cat} → ${j2Cat}`,
           segments: [
             { category_label: 'BASE', value: baseValue },
-            { category_label: j2Cat, value: flowCount },
+            { category_label: j2Cat, value: flowCount, fromCategory: j1Cat },
           ],
         });
       }
