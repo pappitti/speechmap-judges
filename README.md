@@ -1,6 +1,6 @@
 # LLM Assessment Explorer
 
-![LLM Assessment Explorer Demo](https://pitti-backend-assets.ams3.cdn.digitaloceanspaces.com/speechmap/speechmap-judges-overview.mov)
+![LLM Assessment Explorer Demo](https://pitti-backend-assets.ams3.cdn.digitaloceanspaces.com/speechmap/speechmap-judges-overview.mp4)
 
 An interactive TypeScript app for exploring and comparing differences in Large Language Model (LLM) assessments. This tool helps visualize how different "judge" models classify the same LLM-generated responses, providing deep insights into inter-rater reliability and model behavior.
 
@@ -61,4 +61,4 @@ You need to have [Node.js](https://nodejs.org/) (which includes npm) installed o
 Whether you want to promote free speech or moderation, understanding biases in LLMs—and in the case of this project, biases in LLM-judges—is critical. Against this backdrop, the Speechmap project by xlr8harder is a very important initiative.
 
 ## TODO
-*   **Move to `duckdb-wasm`**: Refactor the application to run entirely in the browser. This will involve a client-side data persistence strategy (likely using the Origin Private File System) to download and build the database only once, ensuring fast load times on subsequent visits and eliminating the need for a Node.js backend.
+*   **Move to `duckdb-wasm`**: Refactor the application to run entirely in the browser. This should be faster than the current DuckDb solution and will involve a client-side data persistence strategy (likely using the Origin Private File System) to download and build the database only once, ensuring fast load times on subsequent visits and eliminating the need for a Node.js backend.
