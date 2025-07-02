@@ -16,29 +16,43 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     try {
         const sql = `
-            WITH MatchingResponses AS (
-                SELECT
-                    r.uuid as r_uuid, q.question, q.theme as question_theme, q.domain as question_domain,
-                    r.model as response_model, r.content as response_content
-                FROM assessments a1
-                JOIN assessments a2 ON a1.r_uuid = a2.r_uuid
-                JOIN responses r ON a1.r_uuid = r.uuid
+            WITH MismatchedResponses AS (
+                SELECT a.r_uuid
+                FROM assessments a
+                JOIN responses r ON a.r_uuid = r.uuid
                 JOIN questions q ON r.q_uuid = q.uuid
-                WHERE
-                    a1.judge_model = ? AND a1.compliance = ? AND
-                    a2.judge_model = ? AND a2.compliance = ? AND
+                WHERE 
+                    a.judge_model IN (?, ?) AND
                     (? IS NULL OR q.theme = ?)
+                GROUP BY a.r_uuid
+                HAVING
+                    SUM(CASE WHEN a.judge_model = ? AND a.compliance = ? THEN 1 ELSE 0 END) > 0
+                    AND
+                    SUM(CASE WHEN a.judge_model = ? AND a.compliance = ? THEN 1 ELSE 0 END) > 0
             )
             SELECT
-                mr.*, a.judge_model, a.compliance, a.judge_analysis
-            FROM MatchingResponses mr
+                r.uuid as r_uuid,
+                q.question,
+                q.theme as question_theme,
+                q.domain as question_domain,
+                r.model as response_model,
+                r.content as response_content,
+                a.judge_model,
+                a.compliance,
+                a.judge_analysis
+            FROM MismatchedResponses mr
+            JOIN responses r ON mr.r_uuid = r.uuid
+            JOIN questions q ON r.q_uuid = q.uuid
             JOIN assessments a ON mr.r_uuid = a.r_uuid
-            WHERE a.judge_model IN (?, ?)
-            ORDER BY mr.r_uuid;
+            WHERE
+                a.judge_model IN (?, ?) -- Only get assessments from the two judges in question
+            ORDER BY r.uuid;
         `;
         const params = [
-            judge1, j1_compliance, judge2, j2_compliance,
+            judge1, judge2,  
             theme, theme,
+            judge1, j1_compliance, 
+            judge2, j2_compliance,
             judge1, judge2
         ];
         const rows = await db.query<any>(sql, ...params);

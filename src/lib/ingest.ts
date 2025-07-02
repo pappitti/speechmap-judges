@@ -41,7 +41,6 @@ async function rebuildDatabase() {
     await query(db, 'INSTALL json; LOAD json;');
 
     console.log('Creating database schema...');
-    // TODO : Indexing?
     await query(db, `
         CREATE TABLE themes (slug VARCHAR PRIMARY KEY, name VARCHAR);
         CREATE TABLE questions (uuid VARCHAR PRIMARY KEY, id VARCHAR, category VARCHAR, domain VARCHAR, question VARCHAR, theme VARCHAR);
@@ -49,6 +48,13 @@ async function rebuildDatabase() {
         CREATE TABLE assessments (uuid VARCHAR PRIMARY KEY, q_uuid VARCHAR, r_uuid VARCHAR, judge_model VARCHAR, judge_analysis VARCHAR, compliance VARCHAR, raw_judge_analysis VARCHAR, matched BOOLEAN, origin VARCHAR);
     `);
     console.log('Schema created.');
+
+    console.log('Creating indexes for faster queries...');
+    await query(db, `CREATE INDEX idx_assessments_r_uuid ON assessments (r_uuid);`);
+    await query(db, `CREATE INDEX idx_assessments_judge_compliance ON assessments (judge_model, compliance);`);
+    await query(db, `CREATE INDEX idx_responses_q_uuid ON responses (q_uuid);`);
+    await query(db, `CREATE INDEX idx_questions_theme ON questions (theme);`);
+    console.log('Indexes created.');
 
     console.log('Ingesting themes and questions...');
     await query(db, `
