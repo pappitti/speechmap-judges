@@ -32,8 +32,8 @@ You need to have [Node.js](https://nodejs.org/) (which includes npm) installed o
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/pappitti/speechmap-judges.git
+    cd speechmap-judges
     ```
 
 2.  **Install dependencies:**
