@@ -1,4 +1,3 @@
-// packages/frontend/src/App.tsx
 import { useState, useEffect } from 'react';
 // import { Container, Typography, Box } from '@mui/material';
 import Waterfall from './components/Waterfall.js';
@@ -9,20 +8,17 @@ import type { Theme, TransitionMatrix, AssessmentItem } from './types';
 import FilterBar from './components/Filterbar';
 
 function App() {
-  // State to hold our fetched data for the filters
+
   const [themes, setThemes] = useState<Theme[]>([]);
   const [judges, setJudges] = useState<string[]>([]);
   const [matrix, setMatrix] = useState<TransitionMatrix | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // State for the currently selected filters
   const [selectedTheme, setSelectedTheme] = useState<string>('');
   const [selectedJudge1, setSelectedJudge1] = useState<string>('');
   const [selectedJudge2, setSelectedJudge2] = useState<string>('');
-
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
   const [selectedItems, setSelectedItems] = useState<AssessmentItem[]>([]);
 
 
@@ -49,9 +45,9 @@ function App() {
       }
     };
     loadFilters();
-  }, []); // The empty array ensures this runs only once on mount
+  }, []); 
 
-  
+  // Data fetching logic
   useEffect(() => {
     if (!selectedJudge1 || !selectedJudge2) return;
 
@@ -72,6 +68,7 @@ function App() {
     fetchData();
   }, [selectedTheme, selectedJudge1, selectedJudge2]);
 
+  // Handle cell click to fetch assessment items
   const handleCellClick = (fromCategory: string, toCategory: string) => {
     if (selectedJudge1 && selectedJudge2 && fromCategory && toCategory) {
       getAssessmentItems(selectedJudge1, selectedJudge2, fromCategory, toCategory, selectedTheme)

@@ -1,8 +1,6 @@
-// packages/frontend/src/lib/chartUtils.ts
 import type { TransitionMatrix } from '../types.js';
-import type { Data } from 'plotly.js';
 
-// --- Constants (mirrored from your Python script) ---
+
 export const CATEGORIES = ["COMPLETE", "EVASIVE", "DENIAL", "ERROR" /*, "UNKNOWN"*/];
 export const COLOR_MAP: Record<string, string> = {
     "BASE": 'rgba(0,0,0,0)', // Transparent for the base of flow bars
@@ -13,7 +11,7 @@ export const COLOR_MAP: Record<string, string> = {
     /*"UNKNOWN": "#6b7280"*/
 };
 
-// --- Type Definitions for our Chart Data Structures ---
+
 interface Segment {
   category_label: string;
   value: number;
@@ -23,8 +21,6 @@ interface PlotStage {
   stage_name: string;
   segments: Segment[];
 }
-
-// --- Main Logic: Port of your Python `create_waterfall_stages` function ---
 
 export function generateWaterfallData(
   matrix: TransitionMatrix,
@@ -103,17 +99,17 @@ export function generateWaterfallData(
 }
 
 
-export function generateHeatmapData(matrix: TransitionMatrix) : Data {
-  // Create a 2D array (z-axis) for the heatmap values
-  const z = CATEGORIES.map(j1Cat => 
-    CATEGORIES.map(j2Cat => matrix[j1Cat]?.[j2Cat] || 0)
-  );
-  return {
-    type: 'heatmap' as const, // <--- ADD THIS
-    z,
-    x: CATEGORIES,
-    y: CATEGORIES,
-    colorscale: 'Viridis' as const, // Optional: add a colorscale for better visuals
-    hoverongaps: false,
-  };
-}
+// export function generateHeatmapData(matrix: TransitionMatrix) : Data {
+//   // Create a 2D array (z-axis) for the heatmap values
+//   const z = CATEGORIES.map(j1Cat => 
+//     CATEGORIES.map(j2Cat => matrix[j1Cat]?.[j2Cat] || 0)
+//   );
+//   return {
+//     type: 'heatmap' as const, // <--- ADD THIS
+//     z,
+//     x: CATEGORIES,
+//     y: CATEGORIES,
+//     colorscale: 'Viridis' as const, // Optional: add a colorscale for better visuals
+//     hoverongaps: false,
+//   };
+// }

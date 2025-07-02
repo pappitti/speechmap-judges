@@ -206,7 +206,14 @@ body {
   display: flex;
   align-items: start;
   justify-content: center;
+  transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.waterfall-bar:hover {
+  transform: scale(1.05);
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .bar-value {
@@ -369,6 +376,7 @@ body {
 }
 
 .heatmap-cell {
+  position: relative;
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -377,6 +385,8 @@ body {
   transition: all 0.2s ease;
   border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 .heatmap-cell:hover {
@@ -385,11 +395,28 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+.heatmap-cell-bg {
+  width: 100%;
+  height: 100%;
+}
+
 .cell-value {
+  position:absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
   color: white;
   font-weight: 600;
-  font-size: 0.875rem;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  font-size: 0.875rem;;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+  display: flex ;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell-value:hover{
+  color: #6b7280;
+  text-shadow: none;
 }
 
 /* Assessment Items Styles */
@@ -516,6 +543,64 @@ body {
   color: #6b7280;
   line-height: 1.6;
   font-size: 0.875rem;
+}
+
+/* Markdown Styles */
+.markdown-content {
+  line-height: 1.6;
+  color: #333;
+}
+
+.markdown-content h1 {
+  color: #2c3e50;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.3rem;
+}
+
+.markdown-content h2 {
+  color: #34495e;
+  margin-top: 2rem;
+}
+
+.markdown-content h3 {
+  color: #4b5563;
+  margin-top: 1.5rem;
+  margin-bottom: unset;
+  padding-bottom: 0.5rem;
+  border-bottom: none;
+}
+
+.markdown-content p{
+  margin: 0.25rem 0;
+  color: #6b7280;
+}
+
+.markdown-content pre {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid #3498db;
+  margin: 1rem 0;
+  padding-left: 1rem;
+  color: #666;
+}
+
+.markdown-content ul, 
+.markdown-content ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.markdown-content li {
+  color : #6b7280;
+}
+
+.markdown-content hr {
+  margin : 1rem 0;
 }
 
 /* Responsive Design */

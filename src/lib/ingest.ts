@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url'; // <-- IMPORT THIS
+import { fileURLToPath } from 'url'; 
 import duckdb from 'duckdb';
 
 
@@ -13,8 +13,7 @@ export const DATA_SOURCES = {
   assessments: 'https://huggingface.co/datasets/PITTI/speechmap-assessments/resolve/main/consolidated_assessments.parquet',
 };
 
-// --- DATABASE HELPER ---
-// (This function is already perfect, no changes needed)
+
 function query(db: duckdb.Database, sql: string): Promise<any[]> {
   return new Promise((resolve, reject) => {
     db.all(sql, (err, res) => {
@@ -24,7 +23,7 @@ function query(db: duckdb.Database, sql: string): Promise<any[]> {
   });
 }
 
-// --- STANDALONE SCRIPT LOGIC ---
+
 async function rebuildDatabase() {
   console.log('--- Starting full database rebuild with DuckDB ---');
 
@@ -42,7 +41,7 @@ async function rebuildDatabase() {
     await query(db, 'INSTALL json; LOAD json;');
 
     console.log('Creating database schema...');
-    // (Your schema and ingestion logic is fine, no changes needed)
+    // TODO : Indexing?
     await query(db, `
         CREATE TABLE themes (slug VARCHAR PRIMARY KEY, name VARCHAR);
         CREATE TABLE questions (uuid VARCHAR PRIMARY KEY, id VARCHAR, category VARCHAR, domain VARCHAR, question VARCHAR, theme VARCHAR);

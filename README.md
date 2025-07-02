@@ -5,3 +5,11 @@ This will read the fils from the HuggingFace repository and create a DuckDB data
 
 run the app ;
 `npm dev`
+
+TODO: 
+- clean unused modules and components
+- loading
+- DB indexing
+- click on waterfall
+- move all interfaces and types to types.ts
+- test on new device

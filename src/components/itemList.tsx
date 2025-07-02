@@ -1,3 +1,4 @@
+import ReactMarkdown from 'react-markdown';
 import type { AssessmentItem } from '../types';
 
 interface AssessmentItemsProps {
@@ -30,7 +31,7 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ items, selectedCatego
             
             <div className="item-answer">
               <h4>LLM Response ({item.model})</h4>
-              <p>{item.response}</p>
+              <div className='markdown-content'><ReactMarkdown>{item.response}</ReactMarkdown></div>
             </div>
             <h4>Assessments</h4>
             <div className="item-assessments">
@@ -45,7 +46,7 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ items, selectedCatego
                       </span>
                     </div>
                     <div className="assessment-analysis">
-                      {assessment.judge_analysis || 'No analysis provided'}
+                      <ReactMarkdown>{assessment.judge_analysis || 'No analysis provided'}</ReactMarkdown>
                     </div>
                   </div>
                 ))}

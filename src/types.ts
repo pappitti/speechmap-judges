@@ -2,7 +2,7 @@ export interface Question {
   uuid: string;
   id: string;
   category: string;
-  domain?: string;
+  domain?: string; // Optional, can be null
   question: string;
   theme?: string; // Optional, can be null
 }
@@ -12,8 +12,8 @@ export interface Response {
   q_uuid: string; // Foreign key to Question
   model?: string;
   timestamp?: string; // ISO date string
-  api_provider?: string;
-  provider?: string;
+  api_provider?: string; // Optional, can be null
+  provider?: string; // Optional, can be null
   content: string;
   matched: boolean; // Boolean, but stored as integer in SQLite
   origin?: string; // Optional, can be null

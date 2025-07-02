@@ -3,7 +3,7 @@ import db from '../src/lib/db.js';
 import { jsonResponse } from './utils.js';
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  // We need to parse query parameters from the URL
+  // parsing query parameters from the URL
   const url = new URL(req.url!, `http://${req.headers.host}`);
   const judge1 = url.searchParams.get('judge1');
   const judge2 = url.searchParams.get('judge2');
@@ -28,7 +28,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       sql, judge1, judge2, theme, theme
     );
     
-    // The matrix logic is identical
+    // matrix logic
     const transitionMatrix: Record<string, Record<string, number>> = {};
     for (const row of rows) {
       if (!transitionMatrix[row.judge1_compliance]) {

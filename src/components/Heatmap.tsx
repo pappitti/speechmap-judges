@@ -16,7 +16,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ matrix, judge1, judge2, onCellClick }
   ) || 1; // Avoid division by zero
 
   const getOpacity = (value: number) => {
-    return value === 0 ? 0.1 : 0.1 + (value / maxValue) * 0.9;
+    return value === 0 ? 0.05 : 0.05 + (value / maxValue) * 0.95;
   };
 
   return (
@@ -41,13 +41,13 @@ const Heatmap: React.FC<HeatmapProps> = ({ matrix, judge1, judge2, onCellClick }
                         <div
                         key={`${fromCat}-${toCat}`}
                         className="heatmap-cell"
-                        style={{
-                            backgroundColor: COLOR_MAP[toCat],
-                            opacity: getOpacity(value)
-                        }}
                         onClick={() => onCellClick(fromCat, toCat)}
                         title={`${fromCat} → ${toCat}: ${value}`}
                         >
+                          <div  
+                            className='heatmap-cell-bg' 
+                            style={{ backgroundColor: COLOR_MAP[toCat], opacity: getOpacity(value) }}>
+                          </div>
                             {value > 0 && <span className="cell-value">{value}</span>}
                         </div>
                     );

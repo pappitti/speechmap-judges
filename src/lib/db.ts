@@ -1,7 +1,6 @@
 import duckdb from 'duckdb';
 import path from 'path';
 
-//  DB is one level up
 const ROOT_DIR = process.cwd(); // cwd() = Current Working Directory
 const dbPath = path.join(ROOT_DIR, 'database.duckdb');
 
