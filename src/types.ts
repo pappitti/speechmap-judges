@@ -39,7 +39,6 @@ export interface Theme {
 export type TransitionMatrix = Record<string, Record<string, number>>;
 
 interface JudgeAssessment{
-  judge_model: string;
   judge_analysis: string;
   compliance: string;
 }
@@ -50,5 +49,5 @@ export interface AssessmentItem {
   domain: string;
   response: string;
   model: string;
-  assessments: JudgeAssessment[];
+  assessments: Record<string,JudgeAssessment>;
 }

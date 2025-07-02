@@ -58,6 +58,8 @@ function App() {
       try {
         const result = await getReclassificationData(selectedJudge1, selectedJudge2, selectedTheme);
         setMatrix(result);
+        setSelectedItems([]); 
+        setSelectedCategory(null); 
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred.');
       } finally {
@@ -119,14 +121,7 @@ function App() {
           )}
 
          {!isLoading && matrix && (
-          // <div>
-          //   <Dashboard
-          //     matrix={matrix}
-          //     judge1={selectedJudge1}
-          //     judge2={selectedJudge2}
-          //     isLoading={isLoading}
-          //     error={error}
-          //   />
+
           <div className="charts-container">
             <Waterfall
               matrix={matrix}
@@ -147,6 +142,8 @@ function App() {
         )}
         {selectedItems.length > 0 && (
           <AssessmentItems
+            judge1={selectedJudge1}
+            judge2={selectedJudge2}
             items={selectedItems}
             selectedCategory={selectedCategory}
           />

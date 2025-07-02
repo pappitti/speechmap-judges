@@ -53,14 +53,13 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
                     domain: row.question_domain,
                     model: row.response_model,
                     response: row.response_content,
-                    assessments: [],
+                    assessments: {},
                 });
             }
-            resultsByResponse.get(row.r_uuid).assessments.push({
-                judge_model: row.judge_model,
+            resultsByResponse.get(row.r_uuid).assessments[row.judge_model] = {
                 compliance: row.compliance,
                 judge_analysis: row.judge_analysis,
-            });
+            };
         }
         jsonResponse(res, 200, Array.from(resultsByResponse.values()));
     } catch (error) {

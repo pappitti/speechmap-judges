@@ -97,19 +97,3 @@ export function generateWaterfallData(
 
   return plotStages;
 }
-
-
-// export function generateHeatmapData(matrix: TransitionMatrix) : Data {
-//   // Create a 2D array (z-axis) for the heatmap values
-//   const z = CATEGORIES.map(j1Cat => 
-//     CATEGORIES.map(j2Cat => matrix[j1Cat]?.[j2Cat] || 0)
-//   );
-//   return {
-//     type: 'heatmap' as const, // <--- ADD THIS
-//     z,
-//     x: CATEGORIES,
-//     y: CATEGORIES,
-//     colorscale: 'Viridis' as const, // Optional: add a colorscale for better visuals
-//     hoverongaps: false,
-//   };
-// }

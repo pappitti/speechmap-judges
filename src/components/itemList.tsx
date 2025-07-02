@@ -2,11 +2,13 @@ import ReactMarkdown from 'react-markdown';
 import type { AssessmentItem } from '../types';
 
 interface AssessmentItemsProps {
+  judge1: string;
+  judge2: string;
   items: AssessmentItem[];
   selectedCategory: string | null;
 }
 
-const AssessmentItems: React.FC<AssessmentItemsProps> = ({ items, selectedCategory }) => {
+const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items, selectedCategory }) => {
   if (!selectedCategory || items.length === 0) {
     return (
       <div className="assessment-items">
@@ -35,21 +37,34 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ items, selectedCatego
             </div>
             <h4>Assessments</h4>
             <div className="item-assessments">
-              { item.assessments.length > 0 ? (
+              { Object.entries(item.assessments).length > 0 ? (
                 <>
-                  { item.assessments.map((assessment, idx) => (
-                    <div key={idx} className="assessment">
+                  { judge1 && (
+                    <div key={`assessment-${judge1}`} className="assessment">
                       <div className="assessment-header">
-                        <span className="judge-name">{assessment.judge_model}</span>
-                        <span className={`assessment-label ${assessment.compliance.toLowerCase()}`}>
-                        {assessment.compliance}
+                        <span className="judge-name">{judge1}</span>
+                        <span className={`assessment-label ${item.assessments[judge1].compliance.toLowerCase()}`}>
+                        {item.assessments[judge1].compliance}
                       </span>
                     </div>
                     <div className="assessment-analysis">
-                      <ReactMarkdown>{assessment.judge_analysis || 'No analysis provided'}</ReactMarkdown>
+                      <ReactMarkdown>{item.assessments[judge1].judge_analysis || 'No analysis provided'}</ReactMarkdown>
                     </div>
                   </div>
-                ))}
+                )}
+                { judge2 && (
+                    <div key={`assessment-${judge2}`} className="assessment">
+                      <div className="assessment-header">
+                        <span className="judge-name">{judge2}</span>
+                        <span className={`assessment-label ${item.assessments[judge2].compliance.toLowerCase()}`}>
+                        {item.assessments[judge2].compliance}
+                      </span>
+                    </div>
+                    <div className="assessment-analysis">
+                      <ReactMarkdown>{item.assessments[judge2].judge_analysis || 'No analysis provided'}</ReactMarkdown>
+                    </div>
+                  </div>
+                )}
               </>
             ) : (
               <p>No assessments available</p>
