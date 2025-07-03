@@ -40,7 +40,7 @@ const Waterfall: React.FC<WaterfallProps> = ({ matrix, judge1, judge2, onCellCli
                                     title={`${category_label} (${count})`}
                                     onClick={() => fromCategory && onCellClick(fromCategory, category_label)}
                                 >
-                                {(count > 0 && category_label != 'BASE' && stage_name.includes('→')) && <span className="bar-value">{count}</span>}
+                                {(count > 0 && category_label != 'BASE' && fromCategory) && <span className="bar-value">{count}</span>}
                             </div>
                             );
                         })}

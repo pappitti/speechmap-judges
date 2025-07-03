@@ -26,7 +26,7 @@ The underlying dataset from Hugging Face includes:
 
 ### Prerequisites
 
-You need to have [Node.js](https://nodejs.org/) (which includes npm) installed on your machine.
+You need to have [Node.js](https://nodejs.org/) (which includes npm) installed on your machine. Requires Node version >=20.15.1  
 
 ### Installation & Setup
 
@@ -41,14 +41,14 @@ You need to have [Node.js](https://nodejs.org/) (which includes npm) installed o
     npm install
     ```
 
-3.  **Fetch Data and Build the Database:**
+3.  **Fetch Data and Build the Database:**  
     This command downloads the Parquet datasets from Hugging Face and creates a local `database.duckdb` file at the root of the project.
 
     ```sh
     npm run db:rebuild
     ```
 
-4.  **Run the application:**
+4.  **Run the application:**  
     This command starts the React frontend development server.
 
     ```sh
