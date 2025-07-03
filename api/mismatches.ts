@@ -66,6 +66,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
                     theme: row.question_theme,
                     domain: row.question_domain,
                     model: row.response_model,
+                    r_uuid: row.r_uuid,
                     response: row.response_content,
                     assessments: {},
                 });

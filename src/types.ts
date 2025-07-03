@@ -47,6 +47,7 @@ export interface AssessmentItem {
   question: string;
   theme: string;
   domain: string;
+  r_uuid: string; 
   response: string;
   model: string;
   assessments: Record<string,JudgeAssessment>;

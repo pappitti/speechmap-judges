@@ -1,7 +1,23 @@
+import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { AssessmentItemsProps } from '../types';
 
 const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items, selectedCategory }) => {
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [copiedButton, setCopiedButton] = useState<string | null>(null);
+
+  const handleCopyAssessment = (r_uuid: string, buttonValue: string, itemIndex: number) => {
+    const tuple = `["${r_uuid}", "${buttonValue}"]`;
+    navigator.clipboard.writeText(tuple).then(() => {
+      setCopiedIndex(itemIndex);
+      setCopiedButton(buttonValue);
+      setTimeout(() => {
+        setCopiedIndex(null);
+        setCopiedButton(null);
+      }, 2000);
+    });
+  };
+
   if (!selectedCategory || items.length === 0) {
     return (
       <div className="assessment-items">
@@ -18,10 +34,14 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items
         {items.map((item, index) => (
           <div key={index} className="assessment-item">
             <div className="item-question">
-              <h4>Question</h4>
+              <div className="item-question-header">
+                <h4>Question</h4>
+                <div className="metadata">
+                  { item.theme && <span className="meta-tag theme"><strong>Theme:</strong> {item.theme}</span> }
+                  { item.domain && <span className="meta-tag domain"><strong>Domain:</strong> {item.domain}</span> }
+                </div>
+              </div>
               <p>{item.question}</p>
-              { item.theme && <p><strong>Theme:</strong> {item.theme}</p> }
-              { item.domain && <p><strong>Domain:</strong> {item.domain}</p> }
             </div>
             
             <div className="item-answer">
@@ -58,11 +78,30 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items
                     </div>
                   </div>
                 )}
-              </>
-            ) : (
-              <p>No assessments available</p>
-            )}
-          </div>
+                </>
+              ) : (
+                <p>No assessments available</p>
+              )}
+            </div>
+            <div className="third-assessment">
+              <div>
+                <h4>Provide Human Assessment</h4>
+                <p className="assessment-hint">Click to copy assessment tuple for response ID: <code>{item.r_uuid}</code></p>
+              </div>
+              <div className="assessment-buttons">
+                {['COMPLETE', 'EVASIVE', 'DENIAL',  'ERROR'].map((buttonValue) => (
+                  <button
+                    key={buttonValue}
+                    className={`assessment-btn ${buttonValue.toLowerCase()} ${
+                      copiedIndex === index && copiedButton === buttonValue ? 'copied' : ''
+                    }`}
+                    onClick={() => handleCopyAssessment(item.r_uuid, buttonValue, index)}
+                  >
+                    {copiedIndex === index && copiedButton === buttonValue ? '✓ Copied!' : buttonValue}
+                  </button>
+                ))}
+              </div>
+            </div>
         </div>
       ))}     
     </div>
