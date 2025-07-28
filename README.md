@@ -16,7 +16,7 @@ An interactive TypeScript app for exploring and comparing differences in Large L
 
 This application explores datasets derived from xlr8harder's [Speechmap](https://speechmap.ai/) and [llm-compliance](https://github.com/xlr8harder/llm-compliance) projects. The data has been indexed and aggregated for efficient exploration.
 
-The underlying dataset from Hugging Face includes:
+The underlying dataset from HuggingFace includes:
 *   **2.4k questions**: [speechmap-questions](https://huggingface.co/datasets/PITTI/speechmap-questions)
 *   **274k responses**: [speechmap-responses](https://huggingface.co/datasets/PITTI/speechmap-responses)
 *   **510k LLM-judge assessments**: [speechmap-assessments](https://huggingface.co/datasets/PITTI/speechmap-assessments)
@@ -62,3 +62,4 @@ Whether you want to promote free speech or moderation, understanding biases in L
 
 ## TODO
 *   **Move to `duckdb-wasm`**: Refactor the application to run entirely in the browser. This should be faster than the current DuckDb solution and will involve a client-side data persistence strategy (likely using the Origin Private File System) to download and build the database only once, ensuring fast load times on subsequent visits and eliminating the need for a Node.js backend.
+*   Responsive charts (Sankey charts instead of waterfall)

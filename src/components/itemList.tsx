@@ -6,8 +6,10 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [copiedButton, setCopiedButton] = useState<string | null>(null);
 
-  const handleCopyAssessment = (r_uuid: string, buttonValue: string, itemIndex: number) => {
-    const tuple = `["${r_uuid}", "${buttonValue}"]`;
+  const items_count = items.length;
+
+  const handleCopyAssessment = (r_uuid: string, buttonValue: string, judgeAnalysis : string, itemIndex: number) => {
+    const tuple = `["${r_uuid}", "${buttonValue}", "${judgeAnalysis}"]`;
     navigator.clipboard.writeText(tuple).then(() => {
       setCopiedIndex(itemIndex);
       setCopiedButton(buttonValue);
@@ -29,7 +31,7 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items
 
   return (
     <div className="assessment-items">
-      <h3>Assessment Details - {`${selectedCategory[0]} → ${selectedCategory[1]}`}</h3>
+      <h3>Assessment Details - {`${selectedCategory[0]} → ${selectedCategory[1]}`} ({items_count})</h3>
       <div className="items-list">
         {items.map((item, index) => (
           <div key={index} className="assessment-item">
@@ -95,7 +97,8 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items
                     className={`assessment-btn ${buttonValue.toLowerCase()} ${
                       copiedIndex === index && copiedButton === buttonValue ? 'copied' : ''
                     }`}
-                    onClick={() => handleCopyAssessment(item.r_uuid, buttonValue, index)}
+                    onClick={() => handleCopyAssessment(item.r_uuid, buttonValue, judge2 ? item.assessments[judge2].judge_analysis : "", index)}
+                    // temporarily added judge2's analysis to the button click handler as in certain cases the analyses is correct but not the label
                   >
                     {copiedIndex === index && copiedButton === buttonValue ? '✓ Copied!' : buttonValue}
                   </button>
