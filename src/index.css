@@ -311,7 +311,7 @@ body {
 
 .y-axis-label, .x-axis-label {
   font-weight: 600;
-  color: var(--subheader-color)
+  color: var(--subheader-color);
   font-size: 0.875rem;
 }
 
