@@ -17,12 +17,18 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --bg-color:#242424;
+  --secondary-bg-color: #21272d;
+  --text-color: rgba(255, 255, 255, 0.87);
+  --header-color: #73777c;
+  --subheader-color: #9ca4b0;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  color: #1e293b;
+  background: linear-gradient(135deg, var(--secondary-bg-color) 0%, #161b21 100%);
+  color: var(--text-color);
   line-height: 1.6;
   min-height: 100vh;
 }
@@ -35,7 +41,7 @@ body {
 
 /* Header Styles */
 .app-header {
-  background: white;
+  background: var(--bg-color);
   border-bottom: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
   padding: 1rem 0;
@@ -81,7 +87,7 @@ body {
 
 /* Filter Bar Styles */
 .filter-bar {
-  background: white;
+  background: var(--bg-color);
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -101,7 +107,7 @@ body {
 .filter-label {
   font-weight: 600;
   font-size: 0.875rem;
-  color: #374151;
+  color: var(--subheader-color);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -111,8 +117,8 @@ body {
   border: 2px solid #e5e7eb;
   border-radius: 12px;
   font-size: 1rem;
-  background: white;
-  color: #374151;
+  background: var(--bg-color);
+  color: var(--text-color);
   transition: all 0.2s ease;
   cursor: pointer;
 }
@@ -140,7 +146,7 @@ body {
 /* Waterfall Chart Styles */
 .waterfall-container {
   position: relative;
-  background: white;
+  background: var(--bg-color);
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -156,7 +162,7 @@ body {
 .chart-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-color);
   margin-bottom: 1.5rem;
   text-align: center;
 }
@@ -278,7 +284,7 @@ body {
 
 /* Heatmap Styles */
 .heatmap-container {
-  background: white;
+  background: var(--bg-color);
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -305,7 +311,7 @@ body {
 
 .y-axis-label, .x-axis-label {
   font-weight: 600;
-  color: #374151;
+  color: var(--subheader-color)
   font-size: 0.875rem;
 }
 
@@ -421,7 +427,7 @@ body {
 
 /* Assessment Items Styles */
 .assessment-items {
-  background: white;
+  background: var(--bg-color);
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -431,7 +437,7 @@ body {
 .assessment-items h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--text-color);
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 2px solid #e5e7eb;
@@ -454,12 +460,12 @@ body {
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 2rem;
-  background: #f8fafc;
+  background: var(--secondary-bg-color);
   transition: all 0.2s ease;
 }
 
 .assessment-item:hover {
-  border-color: #10b981;
+  border-color: #b9b610;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
 }
 
@@ -506,7 +512,7 @@ body {
 h4 {
   font-size: 1rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--subheader-color);
   margin-bottom: 0.5rem;
 }
 
@@ -522,7 +528,7 @@ h4 {
 }
 
 .assessment {
-  background: white;
+  background: var(--bg-color);
   border-radius: 8px;
   padding: 1.5rem;
   border: 1px solid #e5e7eb;
@@ -537,7 +543,7 @@ h4 {
 
 .judge-name {
   font-weight: 600;
-  color: #374151;
+  color: var(--subheader-color);
   font-size: 0.875rem;
 }
 
@@ -649,7 +655,7 @@ h4 {
 }
 
 .markdown-content h2 {
-  color: #34495e;
+  color: var(--header-color);
   margin-top: 2rem;
 }
 
@@ -795,13 +801,30 @@ select:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
+   
     color: #213547;
     background-color: #ffffff;
+
+    --bg-color:#ffffff;
+    --secondary-bg-color: #f8fafc;
+    --text-color: #1e293b7;
+    --header-color: #34495e;
+    --subheader-color: #374151;
   }
+
+  body {
+    background: linear-gradient(135deg, var(--secondary-bg-color) 0%, #e2e8f0 100%);
+    color: var(--text-color);
+  }
+  
   a:hover {
     color: #747bff;
   }
   button {
     background-color: #f9f9f9;
+  }
+  .assessment-item:hover {
+    border-color: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
   }
 }
