@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Waterfall from './components/Waterfall.js';
+import SankeyDiagram from './components/Sankey.js';
 import Heatmap from './components/Heatmap.js';
 import AssessmentItems from './components/itemList.js';
 import { getThemes, getJudges, getReclassificationData, getAssessmentItems } from './utils/apiUtils.js';
@@ -123,7 +124,14 @@ function App() {
 
          {!isLoading && matrix && (
           <div className="charts-container">
-            <Waterfall
+            {/* <Waterfall
+              matrix={matrix}
+              judge1={selectedJudge1}
+              judge2={selectedJudge2}
+              onCellClick={handleCellClick}
+            /> */}
+
+            <SankeyDiagram
               matrix={matrix}
               judge1={selectedJudge1}
               judge2={selectedJudge2}

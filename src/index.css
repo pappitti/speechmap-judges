@@ -18,11 +18,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --bg-color:#242424;
+  --bg-color:#272c31;
   --secondary-bg-color: #21272d;
   --text-color: rgba(255, 255, 255, 0.87);
-  --header-color: #73777c;
-  --subheader-color: #9ca4b0;
+  --heading-color: #73777c;
+  --subheading-color: #9ca4b0;
 }
 
 body {
@@ -107,7 +107,7 @@ body {
 .filter-label {
   font-weight: 600;
   font-size: 0.875rem;
-  color: var(--subheader-color);
+  color: var(--subheading-color);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -144,7 +144,7 @@ body {
 }
 
 /* Waterfall Chart Styles */
-.waterfall-container {
+.waterfall-container, .sankey-container{
   position: relative;
   background: var(--bg-color);
   border-radius: 16px;
@@ -282,6 +282,30 @@ body {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+/* Sankey Diagram Styles */
+
+.sankey-chart {
+  flex:1;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.sankey-link {
+  stroke-opacity: 0.4;
+  transition: stroke-opacity 0.2s ease-in-out;
+}
+
+.sankey-link:hover {
+  stroke-opacity: 0.8;
+  cursor: pointer;
+}
+
+.sankey-node {
+  stroke: #333;
+  stroke-width: 0.5px;
+  stroke-opacity: 0.5;
+}
+
 /* Heatmap Styles */
 .heatmap-container {
   background: var(--bg-color);
@@ -311,11 +335,11 @@ body {
 
 .y-axis-label, .x-axis-label {
   font-weight: 600;
-  color: var(--subheader-color);
+  color: var(--subheading-color);
   font-size: 0.875rem;
 }
 
-.heatmap-y-axis .y-axis-label {
+.sankeydiagram-y-axis.y-axis-label,  .heatmap-y-axis  {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -512,7 +536,7 @@ body {
 h4 {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--subheader-color);
+  color: var(--subheading-color);
   margin-bottom: 0.5rem;
 }
 
@@ -543,7 +567,7 @@ h4 {
 
 .judge-name {
   font-weight: 600;
-  color: var(--subheader-color);
+  color: var(--subheading-color);
   font-size: 0.875rem;
 }
 
@@ -655,7 +679,7 @@ h4 {
 }
 
 .markdown-content h2 {
-  color: var(--header-color);
+  color: var(--heading-color);
   margin-top: 2rem;
 }
 
@@ -808,8 +832,8 @@ select:focus-visible {
     --bg-color:#ffffff;
     --secondary-bg-color: #f8fafc;
     --text-color: #1e293b7;
-    --header-color: #34495e;
-    --subheader-color: #374151;
+    --heading-color: #34495e;
+    --subheading-color: #374151;
   }
 
   body {
