@@ -71,6 +71,15 @@ export interface AssessmentItemsProps {
   selectedCategory: string[] | null;
 }
 
+export interface AssessmentItemProps {
+  item: AssessmentItem;
+  judge1: string | null;
+  judge2: string | null;
+  isSelected: boolean;
+  selectedAssessment: string | null; // e.g., 'COMPLETE', 'EVASIVE'
+  onSelect: (r_uuid: string, buttonValue: string) => void;
+}
+
 export interface Segment {
   category_label: string;
   value: number;
