@@ -638,7 +638,8 @@ h4 {
   padding : 1rem 0;
 }
 
-.assessment-btn {
+.assessment-btn,
+.copy-btn {
   padding: 8px 20px;
   border: 2px solid transparent;
   border-radius: 6px;
@@ -660,10 +661,30 @@ h4 {
   transform: translateY(0);
 }
 
-.assessment-btn.copied {
+.assessment-btn.selected,
+.copy-btn.copied {
   background: #6366f1 !important;
   color: white !important;
   border-color: #6366f1 !important;
+}
+
+.human-assessment {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+  align-items: flex-end;
+}
+
+.human-analysis-input {
+  width: 100%;
+  padding: 1.5rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--text-color);
+  background: var(--bg-color);
+  transition: all 0.2s ease;
 }
 
 /* Markdown Styles */
