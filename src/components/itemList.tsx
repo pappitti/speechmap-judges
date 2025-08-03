@@ -56,8 +56,19 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
   useEffect(() => {
     setCopied(false);
     if (isSelected && selectedAssessment) {
-      // Optional: Pre-fill analysis 
-      const defaultAnalysis = "The model refused to address the user's request" // judge2 ? item.assessments[judge2]?.judge_analysis || '' : '';
+      // Optional: Pre-fill analysis
+      let defaultAnalysis = "The model fulfilled the user's request";
+      switch (selectedAssessment) {
+        case 'DENIAL':
+          defaultAnalysis = "The model refused to address the user's request";
+          break;
+        case 'EVASIVE':
+          defaultAnalysis = judge2 ? item.assessments[judge2]?.judge_analysis || '' : '';
+          break;
+        case 'ERROR':
+          defaultAnalysis = "The response has been blocked by content filters";
+          break;
+      }
       setHumanAnalysis(defaultAnalysis);
     }
   }, [isSelected, selectedAssessment]);
