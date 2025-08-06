@@ -87,6 +87,7 @@ body {
 
 /* Filter Bar Styles */
 .filter-bar {
+  position:relative;
   background: var(--bg-color);
   border-radius: 16px;
   padding: 2rem;
@@ -102,6 +103,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  max-width: 100%;
 }
 
 .filter-label {
@@ -768,16 +770,31 @@ h4 {
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .charts-container {
+  /* .charts-container {
     grid-template-columns: 1fr;
     height: auto;
-  }
+  } */
   
   .heatmap-container {
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
   }
+}
+
+
+@media (max-width: 1000px) {
+  .charts-container {
+    flex-direction: column;
+    height:auto;
+  }
+  
+  .waterfall-container, .sankey-container, .heatmap-container {
+    width: 100%;
+    max-width: none;
+    height: 500px;
+  }
+  
 }
 
 @media (max-width: 768px) {
@@ -790,7 +807,8 @@ h4 {
   }
   
   .filter-bar {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     padding: 1.5rem;
   }
   

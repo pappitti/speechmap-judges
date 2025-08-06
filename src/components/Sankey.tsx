@@ -5,7 +5,7 @@ import type { HeatmapProps as SankeyDiagramProps } from '../types'; // Reuse the
 const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ matrix, judge1, judge2, onCellClick }) => {
     // --- Refs and State for Responsiveness ---
     const containerRef = useRef<HTMLDivElement>(null);
-    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+    const [dimensions, setDimensions] = useState({ width: 1, height: 1 });
 
     // --- Effect to measure container size ---
     useEffect(() => {
@@ -22,7 +22,6 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ matrix, judge1, judge2, o
         observer.observe(currentRef);
         }
 
-        // Cleanup function to disconnect the observer when the component unmounts
         return () => {
         if (currentRef) {
             observer.unobserve(currentRef);
@@ -31,9 +30,9 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ matrix, judge1, judge2, o
     }, []);
 
     // --- Layout Constants ---
-    const NODE_WIDTH = 0;
+    const NODE_WIDTH = 0; // padding on both sides of the edges
     const NODE_GAP = 10; // Vertical gap between nodes
-    const PADDING = { top: 0, bottom: 0, left: 10, right: 10 };
+    const PADDING = { top: 0, bottom: 0, left: 10, right: 10 }; // Padding around the SVG
 
     // --- Calculation Logic inside useMemo ---
     const sankeyData = useMemo(() => {
@@ -189,7 +188,7 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ matrix, judge1, judge2, o
                             ))}
                         </g>
 
-                        {/* 
+                        {/* Removing nodes for now (no real value add but keeping it commented-out for later)
                         <g>
                             {sankeyData.nodes.map(node => (
                             <g key={node.id}>
