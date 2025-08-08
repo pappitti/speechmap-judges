@@ -1,4 +1,4 @@
-import type { TransitionMatrix, PlotStage, Segment } from '../types.js';
+import type { TransitionMatrix, PlotStage, Segment } from '../types.ts';
 
 export const CATEGORIES = ["COMPLETE", "EVASIVE", "DENIAL", "ERROR" /*, "UNKNOWN"*/];
 export const COLOR_MAP: Record<string, string> = {

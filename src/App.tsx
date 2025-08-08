@@ -1,93 +1,166 @@
-import { useState, useEffect } from 'react';
-import Waterfall from './components/Waterfall.js';
-import SankeyDiagram from './components/Sankey.js';
-import Heatmap from './components/Heatmap.js';
-import AssessmentItems from './components/itemList.js';
-import { getThemes, getJudges, getReclassificationData, getAssessmentItems } from './utils/apiUtils.js';
+import { useState, useEffect, useCallback } from 'react';
+import { useDuckDB } from './hooks/useDuckDB';
+
+import { getThemes, getJudges, getReclassificationData, getAssessmentItems } from './db/api.ts';
 import type { Theme, TransitionMatrix, AssessmentItem } from './types';
+
 import FilterBar from './components/Filterbar';
+// import Waterfall from './components/Waterfall.tsx'; // Removed for now
+import SankeyDiagram from './components/Sankey.tsx';
+import Heatmap from './components/Heatmap.tsx';
+import AssessmentItems from './components/itemList.tsx';
+
 
 function App() {
+
+  const { db, loading: dbLoading, error: dbError, repairDatabase } = useDuckDB();
 
   const [themes, setThemes] = useState<Theme[]>([]);
   const [judges, setJudges] = useState<string[]>([]);
   const [matrix, setMatrix] = useState<TransitionMatrix | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [loadingItems, setLoadingItems] = useState(false);
+
+  const [isFetchingMatrix, setIsFetchingMatrix] = useState(false);
+  const [isFetchingItems, setIsFetchingItems] = useState(false);
 
   const [selectedTheme, setSelectedTheme] = useState<string>('');
   const [selectedJudge1, setSelectedJudge1] = useState<string>('');
   const [selectedJudge2, setSelectedJudge2] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string[] | null>(null);
-  const [selectedItems, setSelectedItems] = useState<AssessmentItem[]>([]);
 
-  // Fetch initial data when the component mounts
+  const [selectedItems, setSelectedItems] = useState<AssessmentItem[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[] | null>(null);
+
   useEffect(() => {
+    if (!db) return;
+
     const loadFilters = async () => {
       try {
         const [themesData, judgesData] = await Promise.all([
-          getThemes(),
-          getJudges()
+          getThemes(db),
+          getJudges(db)
         ]);
+
         setThemes(themesData);
         setJudges(judgesData);
 
-        // Set default selections
         if (judgesData.length >= 2) {
-            setSelectedJudge1(judgesData[0]);
-            setSelectedJudge2(judgesData[1]);
+          setSelectedJudge1(judgesData[0]);
+          setSelectedJudge2(judgesData[1]);
         }
-
       } catch (err) {
-        setError('Failed to load filter data. Is the backend server running?');
-        console.error(err);
-      }
+        console.error("Failed to load filter data:", err);
     };
+    }
+
     loadFilters();
-  }, []); 
+  }, [db]); 
 
   // Data fetching logic
   useEffect(() => {
-    if (!selectedJudge1 || !selectedJudge2) return;
+    if (!db || !selectedJudge1 || !selectedJudge2) return;
 
     const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-      setMatrix(null);
+      setIsFetchingMatrix(true);
+      setMatrix(null); 
+      setSelectedItems([]); 
+      setSelectedCategories(null);
       try {
-        const result = await getReclassificationData(selectedJudge1, selectedJudge2, selectedTheme);
+        const result = await getReclassificationData(db, {
+            judge1: selectedJudge1,
+            judge2: selectedJudge2,
+            theme: selectedTheme || null 
+        });
         setMatrix(result);
-        setSelectedItems([]); 
-        setSelectedCategory(null); 
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+        console.error("Failed to fetch reclassification matrix:", err);
       } finally {
-        setIsLoading(false);
+        setIsFetchingMatrix(false);
       }
     };
 
     fetchData();
-  }, [selectedTheme, selectedJudge1, selectedJudge2]);
+  }, [db, selectedTheme, selectedJudge1, selectedJudge2]);
 
   // Handle cell click to fetch assessment items
-  const handleCellClick = (fromCategory: string, toCategory: string) => {
-    if (selectedJudge1 && selectedJudge2 && fromCategory && toCategory) {
-      setLoadingItems(true);
-      getAssessmentItems(selectedJudge1, selectedJudge2, fromCategory, toCategory, selectedTheme)
-        .then(setSelectedItems)
-        .catch(err => {
-          setError(err instanceof Error ? err.message : 'An unknown error occurred.');
-        })
-        .finally(() => {
-          setLoadingItems(false);
-        });
+  const handleCellClick = useCallback(async (fromCategory: string, toCategory: string) => {
+    if (!db || !selectedJudge1 || !selectedJudge2) return;
 
-      setSelectedCategory([fromCategory, toCategory]);
+    setIsFetchingItems(true);
+    setSelectedItems([]);
+    try {
+    const items = await getAssessmentItems(db, {
+        judge1: selectedJudge1,
+        fromCategory: fromCategory,
+        judge2: selectedJudge2,
+        toCategory: toCategory,
+        theme: selectedTheme || null
+      });
+      setSelectedItems(items);
+      setSelectedCategories([fromCategory, toCategory]);
+    } catch (err) {
+      console.error("Failed to fetch assessment items:", err);
+    } finally {
+      setIsFetchingItems(false);
     }
+  }, [db, selectedJudge1, selectedJudge2, selectedTheme]);
 
-    return;
+  const handleRebuild = async () => {
+    setThemes([]);
+    setJudges([]);
+    setMatrix(null);
+    setSelectedItems([]);
+    setSelectedJudge1('');
+    setSelectedJudge2('');
+    await repairDatabase();
   };
+
+  if (dbLoading) {
+    return (
+      <div className="app">
+        <header className="app-header">
+          <div className="header-content">
+            <div className="logo-section">
+              <svg width="40" height="40" viewBox="0 0 40 40" className="logo">
+                <circle cx="20" cy="20" r="18" fill="#10b981" />
+                <path d="M12 20l6 6 10-12" stroke="white" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <h1 className="app-title">LLM Assessment Explorer</h1>
+            </div>
+          </div>
+        </header>
+        <main className="main-content">
+          <div className="loading-indicator">
+              <div className="loading-spinner"></div>
+              <p>Initializing and building database... This may take a moment on first load.</p>
+              <button onClick={handleRebuild} disabled>Rebuild Database</button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (dbError) {
+    return (
+      <div className="app">
+        <header className="app-header">
+          <div className="header-content">
+            <div className="logo-section">
+              <svg width="40" height="40" viewBox="0 0 40 40" className="logo">
+                <circle cx="20" cy="20" r="18" fill="#10b981" />
+                <path d="M12 20l6 6 10-12" stroke="white" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <h1 className="app-title">LLM Assessment Explorer</h1>
+            </div>
+          </div>
+        </header>
+         <main className="main-content">
+            <h2>A critical error occurred</h2>
+            <p>{dbError.message}</p>
+            <p>The database failed to initialize. You can try rebuilding it.</p>
+            <button onClick={handleRebuild}>Rebuild Database</button>
+        </main>
+      </div>
+    );
+  }
 
   return (
       <div className="app">
@@ -115,14 +188,14 @@ function App() {
               onJudge2Change={setSelectedJudge2}
           />
 
-          {isLoading && (
+          {(isFetchingMatrix) && (
             <div className="loading-indicator">
               <div className="loading-spinner"></div>
               <p>Loading data...</p>
             </div>
           )}
 
-         {!isLoading && matrix && (
+         {!isFetchingMatrix && matrix && (
           <div className="charts-container">
             {/* <Waterfall
               matrix={matrix}
@@ -147,15 +220,15 @@ function App() {
           </div>
         )}
 
-        {!loadingItems && selectedItems.length > 0 && (
+        {!isFetchingItems && selectedItems.length > 0 && (
           <AssessmentItems
             judge1={selectedJudge1}
             judge2={selectedJudge2}
             items={selectedItems}
-            selectedCategory={selectedCategory}
+            selectedCategory={selectedCategories}
           />
         )}
-        {loadingItems && (
+        {isFetchingItems && (
             <div className="loading-indicator">
               <div className="loading-spinner"></div>
               <p>Loading data...</p>

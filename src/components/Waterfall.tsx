@@ -1,4 +1,4 @@
-import { COLOR_MAP, generateWaterfallData } from '../utils/chartUtils.js';
+import { COLOR_MAP, generateWaterfallData } from '../utils/chartUtils';
 import type { WaterfallProps } from '../types';
 
 // Shorten judge names for display if they are long

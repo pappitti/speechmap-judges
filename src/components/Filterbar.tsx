@@ -1,4 +1,4 @@
-import type { FilterBarProps } from '../types.js';
+import type { FilterBarProps } from '../types';
 
 const FilterBar: React.FC<FilterBarProps> = ({
   themes,

@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react';
-import { CATEGORIES, COLOR_MAP } from '../utils/chartUtils.js';
+import { CATEGORIES, COLOR_MAP } from '../utils/chartUtils';
 import type { HeatmapProps as SankeyDiagramProps } from '../types'; // Reuse the same props type
 
 const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ matrix, judge1, judge2, onCellClick }) => {

@@ -1,4 +1,4 @@
-import { CATEGORIES, COLOR_MAP } from '../utils/chartUtils.js';
+import { CATEGORIES, COLOR_MAP } from '../utils/chartUtils';
 import type { HeatmapProps } from '../types';
 
 

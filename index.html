@@ -4,6 +4,23 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/pitti.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script>
+      
+      if (typeof SharedArrayBuffer === 'undefined') {
+        window.addEventListener('load', () => {
+          if (navigator.serviceWorker && navigator.serviceWorker.controller === null) {
+            window.location.reload();
+          }
+        });
+      }
+
+      // Register the service worker
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/coi-serviceworker.js', { scope: './' }).catch(() => {});
+      }
+    </script>
+
     <title>SpeechMap Explorer</title>
   </head>
   <body>
