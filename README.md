@@ -8,7 +8,7 @@ An interactive TypeScript app for exploring and comparing differences in Large L
 
 *   **Compare Any Two Judges**: Select any two LLM judges from the dataset to compare their assessments side-by-side.
 *   **Filter by Theme**: Narrow down the analysis to specific topics or domains by filtering by question theme.
-*   **Waterfall Chart**: Visualize the reclassification flow, showing how assessments from Judge 1 are categorized by Judge 2.
+*   **Sankey Chart**: Visualize the reclassification flow, showing how assessments from Judge 1 are categorized by Judge 2.
 *   **Transition Matrix (Heatmap)**: Get a clear, at-a-glance overview of agreement and disagreement between the two selected judges.
 *   **Drill-Down to Details**: Click on any chart element to inspect the specific items, including the original question, the LLM's response, and the detailed analysis from both judges.
 
@@ -46,7 +46,9 @@ You need to have [Node.js](https://nodejs.org/) (which includes npm) installed o
 
     ```sh
     npm run db:rebuild
-    ```
+    ```  
+    This project includes a branch running on duckdb-wasm. That branch does not require this step 3 : you can run `npm run dev` directly after `npm install` (or `npm build` and then `npm run preview` for production run). However, that branch was never merged with the main branch because database persistence is tricky with duckdb so, right now, each time the app is started, the database must be built again which is really bad UX. IndexedDB is not an option ; more work is required on that branch.  
+    _Also, duckdb-wasm in not as fast as expected for a database of this size_
 
 4.  **Run the application:**  
     This command starts the React frontend development server.
@@ -60,6 +62,3 @@ You need to have [Node.js](https://nodejs.org/) (which includes npm) installed o
 
 Whether you want to promote free speech or moderation, understanding biases in LLMs—and in the case of this project, biases in LLM-judges—is critical. Against this backdrop, the Speechmap project by xlr8harder is a very important initiative.
 
-## TODO
-*   **Move to `duckdb-wasm`**: Refactor the application to run entirely in the browser. This should be faster than the current DuckDb solution and will involve a client-side data persistence strategy (likely using the Origin Private File System) to download and build the database only once, ensuring fast load times on subsequent visits and eliminating the need for a Node.js backend.
-*   Responsive charts (Sankey charts instead of waterfall)
