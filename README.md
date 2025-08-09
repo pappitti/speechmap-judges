@@ -47,7 +47,7 @@ You need to have [Node.js](https://nodejs.org/) (which includes npm) installed o
     ```sh
     npm run db:rebuild
     ```  
-    This project includes a branch running on duckdb-wasm. That branch does not require this step 3 : you can run `npm run dev` directly after `npm install` (or `npm build` and then `npm run preview` for production run). However, that branch was never merged with the main branch because database persistence is tricky with duckdb so, right now, each time the app is started, the database must be built again which is really bad UX. IndexedDB is not an option ; more work is required on that branch.  
+    This project includes a branch running on duckdb-wasm. That branch does not require this step 3 : you can run `npm run dev` directly after `npm install` (or `npm run build` and then `npm run preview` for production). However, that branch was never merged with the main branch because database persistence is tricky with duckdb-wasm so, right now, the database must be built again each time the app is started, which is really bad UX. IndexedDB is not an option ; more work is required on that branch.  
     _Also, duckdb-wasm in not as fast as expected for a database of this size_
 
 4.  **Run the application:**  
