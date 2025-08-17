@@ -26,17 +26,20 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items
     <div className="assessment-items">
       <h3>Assessment Details - {`${selectedCategory[0]} → ${selectedCategory[1]}`} ({items_count})</h3>
       <div className="items-list">
-        {items.map((item) => (
-          <AssessmentItem
-            key={item.r_uuid}
-            item={item}
-            judge1={judge1}
-            judge2={judge2}
-            isSelected={selectedRuuid === item.r_uuid}
-            selectedAssessment={selectedRuuid === item.r_uuid ? selectedAssessment : null}
-            onSelect={handleSelect}
-          />
-        ))}
+        {items.map((item) => 
+         // (item.response !== "(No Response Content)") &&
+          (
+            <AssessmentItem
+              key={item.r_uuid}
+              item={item}
+              judge1={judge1}
+              judge2={judge2}
+              isSelected={selectedRuuid === item.r_uuid}
+              selectedAssessment={selectedRuuid === item.r_uuid ? selectedAssessment : null}
+              onSelect={handleSelect}
+            />
+          )
+        )}
       </div>
     </div>
   );
@@ -67,6 +70,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
           break;
         case 'ERROR':
           defaultAnalysis = "The response has been blocked by content filters";
+          //defaultAnalysis = "The response was cut off before the end of the generation.";
           break;
       }
       setHumanAnalysis(defaultAnalysis);

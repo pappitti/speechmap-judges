@@ -156,8 +156,6 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ matrix, judge1, judge2, o
         });
         });
 
-        console.log('Data:', { nodes, links });
-
         return { nodes, links };
     }, [matrix, dimensions]);
 
@@ -170,8 +168,6 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ matrix, judge1, judge2, o
                         {judge1.split('/')[1] || judge1}
                     </div>
                     <svg width={dimensions.width} height={dimensions.height}>
-
-                        {/* Links */}
                         <g>
                             {sankeyData.links.map(link => (
                             <path
@@ -181,7 +177,10 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ matrix, judge1, judge2, o
                                 strokeWidth={link.strokeWidth}
                                 fill="none"
                                 className="sankey-link"
-                                onClick={() => onCellClick(link.from, link.to)}
+                                onClick={() => link.value < 10000 
+                                  ? onCellClick(link.from, link.to)
+                                  : alert("Details only available for values < 10000. Please refine your selection.")
+                                }
                             >
                                 <title>{`${link.from} → ${link.to}: ${link.value}`}</title>
                             </path>
