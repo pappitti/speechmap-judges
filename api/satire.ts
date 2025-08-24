@@ -16,11 +16,18 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
               q.theme,
               q.domain,
               r.uuid AS r_uuid,
+              r.model AS r_model,
               r.content,
               -- Pivot the compliance for the first judge into its own column
+              MAX(CASE WHEN a.judge_model = ? THEN a.uuid END) AS judge1_uuid,
+              MAX(CASE WHEN a.judge_model = ? THEN a.judge_model END) AS judge1_model,
               MAX(CASE WHEN a.judge_model = ? THEN a.compliance END) AS judge1_compliance,
+              MAX(CASE WHEN a.judge_model = ? THEN a.judge_analysis END) AS judge1_analysis,
               -- Pivot the compliance for the second judge into its own column
-              MAX(CASE WHEN a.judge_model = ? THEN a.compliance END) AS judge2_compliance
+              MAX(CASE WHEN a.judge_model = ? THEN a.uuid END) AS judge2_uuid,
+              MAX(CASE WHEN a.judge_model = ? THEN a.judge_model END) AS judge2_model,
+              MAX(CASE WHEN a.judge_model = ? THEN a.compliance END) AS judge2_compliance,
+              MAX(CASE WHEN a.judge_model = ? THEN a.judge_analysis END) AS judge2_analysis
           FROM questions q
           JOIN responses r ON r.q_uuid = q.uuid
           JOIN assessments a ON a.r_uuid = r.uuid
@@ -33,6 +40,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
               q.theme,
               q.domain,
               r.uuid,
+              r.model,
               r.content
           HAVING
               -- Condition 1: Ensure both judges have actually assessed this response.
@@ -48,8 +56,28 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
           ORDER BY
               q.uuid;
       `;
-    const params = [judge1, judge2, judge1, judge2];
-    const rows = await db.query<{ q_uuid: string, question: string, theme: string, domain: string, r_uuid: string, r_content: string, judge1_compliance: string, judge2_compliance: string }>(sql, ...params);
+    const params = [
+      judge1, judge1, judge1, judge1,
+      judge2, judge2, judge2, judge2,
+      judge1, judge2
+    ];
+    const rows = await db.query<{ 
+      q_uuid: string, 
+      question: string, 
+      theme: string, 
+      domain: string, 
+      r_uuid: string, 
+      r_model: string, 
+      r_content: string, 
+      judge1_uuid: string, 
+      judge1_model: string,
+      judge1_compliance: string,
+      judge1_analysis: string,
+      judge2_uuid: string,
+      judge2_model: string,
+      judge2_compliance: string,
+      judge2_analysis: string
+    }>(sql, ...params);
     jsonResponse(res, 200, rows);
   } catch (error) {
     console.error('Failed to fetch satires:', error);
