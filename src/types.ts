@@ -23,11 +23,11 @@ export interface Assessment {
   uuid: string;
   q_uuid: string; // Foreign key to Question
   r_uuid: string; // Foreign key to Response
-  judge_model: string; // Model used for assessment
+  judge: string; // Model used for assessment
+  judge_type: string; // LLM or Human
   judge_analysis?: string; // Optional, can be null
   compliance: string; // Compliance status
-  raw_judge_analysis?: string; // Optional, can be null
-  matched: boolean; // Boolean, but stored as integer in SQLite
+  pitti_compliance?: string; // Optional, can be null
   origin?: string; // Optional, can be null
 }
 
@@ -36,11 +36,31 @@ export interface Theme {
   name: string; // Human-readable name for the theme
 }
 
+export interface Judges {
+  name: string;
+  judge_type: string; // human or LLM
+  classifications: Record<string,number>
+}
+
+export interface SelectedJudge {
+  name: string;
+  classification: string;
+}
+
 export type TransitionMatrix = Record<string, Record<string, number>>;
 
 interface JudgeAssessment{
   judge_analysis: string;
   compliance: string;
+}
+
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  pageInput: string;
+  handlePageInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handlePageJump: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export interface AssessmentItem {
@@ -55,13 +75,15 @@ export interface AssessmentItem {
 
 export interface FilterBarProps {
   themes: Theme[];
-  judges: string[];
+  judges: Judges[];
   selectedTheme: string;
   onThemeChange: (value: string) => void;
-  selectedJudge1: string;
-  onJudge1Change: (value: string) => void;
-  selectedJudge2: string;
-  onJudge2Change: (value: string) => void;
+  selectedJudge1: SelectedJudge | null;
+  selectedJudge2: SelectedJudge | null;
+  onJudge1NameChange : (value: string) => void;
+  onJudge1ClassificationChange : (value: string) => void;
+  onJudge2NameChange : (value: string) => void;
+  onJudge2ClassificationChange : (value: string) => void;
 }
 
 export interface AssessmentItemsProps {

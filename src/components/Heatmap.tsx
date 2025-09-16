@@ -1,14 +1,33 @@
-import { CATEGORIES, COLOR_MAP } from '../utils/chartUtils.js';
+import { useMemo } from 'react';
 import type { HeatmapProps } from '../types';
-
+import { categorySort} from '../utils/chartUtils';
 
 
 const Heatmap: React.FC<HeatmapProps> = ({ matrix, judge1, judge2, onCellClick }) => {
-  const maxValue = Math.max(
-    ...CATEGORIES.flatMap(cat1 => 
-      CATEGORIES.map(cat2 => matrix[cat1]?.[cat2] || 0)
-    )
-  ) || 1; // Avoid division by zero
+  const { judge1Cat, judge2Cat, maxValue } = useMemo(() => {
+    const j1Categories = Object.keys(matrix).sort(categorySort);
+
+    let newMaxValue = 1;
+    const allSubCats = new Set<string>();
+
+    j1Categories.forEach(cat => {
+      Object.keys(matrix[cat] || {}).forEach(subCat => {
+        allSubCats.add(subCat);
+        const value = matrix[cat][subCat];
+        if (value > newMaxValue) newMaxValue = value;
+      });
+    });
+
+    // Convert Set to Array and sort
+    const j2Categories = Array.from(allSubCats).sort(categorySort);
+
+    return {
+      judge1Cat: j1Categories,
+      judge2Cat: j2Categories,
+      maxValue: newMaxValue
+    };
+  }, [matrix]);
+  
 
   const getOpacity = (value: number) => {
     return value === 0 ? 0.05 : 0.05 + (value / maxValue) * 0.95;
@@ -22,15 +41,15 @@ const Heatmap: React.FC<HeatmapProps> = ({ matrix, judge1, judge2, onCellClick }
             <div className="heatmap-y-axis">
                 <div className="y-axis-label">{judge1.split('/')[1] || judge1}</div>
                 <div className="y-ticks">
-                    {CATEGORIES.map(cat => (
+                    {judge1Cat.map(cat => (
                     <div key={cat} className="y-tick">{cat}</div>
                     ))}
                 </div>
             </div>
             <div className="heatmap-grid">
-                {CATEGORIES.map(fromCat => (
+                {judge1Cat.map(fromCat => (
                 <div key={fromCat} className="heatmap-row">
-                    {CATEGORIES.map(toCat => {
+                    {judge2Cat.map(toCat => {
                     const value = matrix[fromCat]?.[toCat] || 0;
                     return (
                         <div
@@ -44,7 +63,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ matrix, judge1, judge2, onCellClick }
                         >
                           <div  
                             className='heatmap-cell-bg' 
-                            style={{ backgroundColor: COLOR_MAP[toCat], opacity: getOpacity(value) }}>
+                            style={{ backgroundColor: `var(--${toCat.toLowerCase()}, #fff)`, opacity: getOpacity(value) }}>
                           </div>
                             {value > 0 && <span className="cell-value">{value}</span>}
                         </div>
@@ -56,7 +75,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ matrix, judge1, judge2, onCellClick }
         </div>
         <div className="heatmap-x-axis">
             <div className="x-ticks">
-              {CATEGORIES.map(cat => (
+              {judge2Cat.map(cat => (
                 <div key={cat} className="x-tick">{cat}</div>
               ))}
             </div>

@@ -6,3 +6,4 @@ export function jsonResponse(res: ServerResponse, statusCode: number, data: any)
   res.end(JSON.stringify(data));
 }
 
+export const ALLOWED_CLASSIFICATIONS = new Set(['compliance', 'pitti_compliance']);

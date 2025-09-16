@@ -1,4 +1,6 @@
-import type { FilterBarProps } from '../types.js';
+import type { FilterBarProps, Judges } from '../types.js';
+
+const findJudgeByName = (judges: Judges[], name: string) => judges.find(j => j.name === name);
 
 const FilterBar: React.FC<FilterBarProps> = ({
   themes,
@@ -6,56 +8,108 @@ const FilterBar: React.FC<FilterBarProps> = ({
   selectedTheme,
   onThemeChange,
   selectedJudge1,
-  onJudge1Change,
   selectedJudge2,
-  onJudge2Change,
+  onJudge1NameChange,
+  onJudge1ClassificationChange,
+  onJudge2NameChange,
+  onJudge2ClassificationChange,
 }) => {
+  const judge1Object = selectedJudge1 ? findJudgeByName(judges, selectedJudge1.name) : null;
+  const judge2Object = selectedJudge2 ? findJudgeByName(judges, selectedJudge2.name) : null;
+
   return (
     <div className="filter-bar">
       <div className="filter-group">
-        <label className="filter-label">Theme</label>
-        <select 
-          className="filter-select"
-          value={selectedTheme}
-          onChange={(e) => onThemeChange(e.target.value)}
-        >
-          <option value="">All Themes</option>
-          {themes.map((theme) => (
-            <option key={theme.slug} value={theme.slug}>
-              {theme.slug} ({theme.name})
-            </option>
-          ))}
-        </select>
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='theme-select'>Theme</label>
+          <select 
+            className="filter-select"
+            id='theme-select'
+            value={selectedTheme}
+            onChange={(e) => onThemeChange(e.target.value)}
+          >
+            <option value="">All Themes</option>
+            {themes.map((theme) => (
+              <option key={theme.slug} value={theme.slug}>
+                {theme.slug} ({theme.name})
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       
       <div className="filter-group">
-        <label className="filter-label">Judge 1</label>
-        <select 
-          className="filter-select"
-          value={selectedJudge1}
-          onChange={(e) => onJudge1Change(e.target.value)}
-        >
-          {judges.map((judge) => (
-            <option key={judge} value={judge}>
-              {judge}
-            </option>
-          ))}
-        </select>
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='judge1-select'>Judge 1</label>
+          <select 
+            className="filter-select"
+            id='judge1-select'
+            value={selectedJudge1?.name || ''}
+            onChange={(e) => onJudge1NameChange(e.target.value)}
+          >
+            {judges.map((judge) => (
+              <option key={judge.name} value={judge.name}>
+                {judge.name} ({judge.judge_type})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='judge1-classification-select'>Class.</label>
+          <select 
+            className="filter-select"
+            id='judge1-classification-select'
+            value={selectedJudge1?.classification || ''}
+            onChange={(e) => onJudge1ClassificationChange(e.target.value)}
+            disabled={!judge1Object} // Disable if no judge is selected
+          >
+            {judge1Object && Object.entries(judge1Object.classifications)
+              .filter(([_, count]) => count > 0)
+              .map(([classification]) => (
+                <option key={classification} value={classification}>
+                  {classification}
+                </option>
+            ))}
+          </select>
+        </div>
       </div>
       
       <div className="filter-group">
-        <label className="filter-label">Judge 2</label>
-        <select 
-          className="filter-select"
-          value={selectedJudge2}
-          onChange={(e) => onJudge2Change(e.target.value)}
-        >
-          {judges.map((judge) => (
-            <option key={judge} value={judge}>
-              {judge}
-            </option>
-          ))}
-        </select>
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='judge2-select'>Judge 2</label>
+          <select 
+            className="filter-select"
+            id='judge2-select'
+            value={selectedJudge2?.name || ''}
+            onChange={(e) => onJudge2NameChange(e.target.value)}
+          >
+            {judges.map((judge) => (
+              <option key={judge.name} value={judge.name}>
+                {judge.name} ({judge.judge_type})
+              </option>
+            ))}
+          </select>
+        </div>
+        
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='judge2-classification-select'>Class.</label>
+          <select 
+            className="filter-select"
+            id='judge2-classification-select'
+            value={selectedJudge2?.classification || ''}
+            onChange={(e) => onJudge2ClassificationChange(e.target.value)}
+            disabled={!judge2Object}
+          >
+            {judge2Object && Object.entries(judge2Object.classifications)
+              .filter(([_, count]) => count > 0)
+              .map(([classification]) => (
+                <option key={classification} value={classification}>
+                  {classification}
+                </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );

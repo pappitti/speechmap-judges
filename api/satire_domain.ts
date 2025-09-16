@@ -24,9 +24,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
               q.domain,
               r.uuid AS r_uuid,
               -- Pivot the compliance for the first judge into its own column
-              MAX(CASE WHEN a.judge_model = ? THEN a.compliance END) AS judge1_compliance,
+              MAX(CASE WHEN a.judge = ? THEN a.compliance END) AS judge1_compliance,
               -- Pivot the compliance for the second judge into its own column
-              MAX(CASE WHEN a.judge_model = ? THEN a.compliance END) AS judge2_compliance,
+              MAX(CASE WHEN a.judge = ? THEN a.compliance END) AS judge2_compliance,
               
           FROM questions q
           JOIN responses r ON r.q_uuid = q.uuid
@@ -43,7 +43,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
           HAVING
               -- Condition 1: Ensure both judges have actually assessed this response.
               -- The COUNT will be 2 if both judge models are present in the group.
-              COUNT(DISTINCT a.judge_model) = 2
+              COUNT(DISTINCT a.judge) = 2
               AND
               -- Condition 2: Check for a mismatch in compliance.
               -- This compares the two pivoted columns directly.

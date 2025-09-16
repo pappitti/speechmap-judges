@@ -22,7 +22,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         JOIN responses r ON a1.r_uuid = r.uuid
         JOIN questions q ON r.q_uuid = q.uuid
         WHERE
-          a1.judge_model = ? AND a2.judge_model = ? AND (? IS NULL OR q.theme = ?)
+          a1.judge = ? AND a2.judge = ? AND (? IS NULL OR q.theme = ?)
         ORDER BY r.uuid`;
 
     const rows = await db.query<{ judge1_compliance: string, judge2_compliance: string, r_uuid: string }>(

@@ -1,60 +1,110 @@
 import type { IncomingMessage, ServerResponse } from 'http';
 import db from '../src/lib/db.js';
-import { jsonResponse } from './utils.js';
+import { jsonResponse, ALLOWED_CLASSIFICATIONS } from './utils.js';
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
     const url = new URL(req.url!, `http://${req.headers.host}`);
     const judge1 = url.searchParams.get('judge1');
+    const judge1Classification = url.searchParams.get('judge1Classification');
     const j1_compliance = url.searchParams.get('fromCategory');
     const judge2 = url.searchParams.get('judge2');
+    const judge2Classification = url.searchParams.get('judge2Classification');
     const j2_compliance = url.searchParams.get('toCategory');
     const theme = url.searchParams.get('theme') || null;
 
-    if (!judge1 || !j1_compliance || !judge2 || !j2_compliance) {
+    if (!judge1 || !j1_compliance || !judge2 || !j2_compliance || !judge1Classification || !judge2Classification) {
         return jsonResponse(res, 400, { error: 'judge1, j1_compliance, judge2, and j2_compliance are required.' });
     }
 
+    if (!ALLOWED_CLASSIFICATIONS.has(judge1Classification) || !ALLOWED_CLASSIFICATIONS.has(judge2Classification)) {
+        return jsonResponse(res, 400, { error: 'Invalid classification provided.' });
+      }
+    
     try {
+        // const sql = `
+        //     WITH MismatchedResponses AS (
+        //         SELECT a.r_uuid
+        //         FROM assessments a
+        //         JOIN responses r ON a.r_uuid = r.uuid
+        //         JOIN questions q ON r.q_uuid = q.uuid
+        //         WHERE 
+        //             a.judge IN (?, ?) AND
+        //             (? IS NULL OR q.theme = ?)
+        //         GROUP BY a.r_uuid
+        //         HAVING
+        //             SUM(CASE WHEN a.judge = ? AND a.${judge1Classification} = ? THEN 1 ELSE 0 END) > 0
+        //             AND
+        //             SUM(CASE WHEN a.judge = ? AND a.${judge2Classification} = ? THEN 1 ELSE 0 END) > 0
+        //     )
+        //     SELECT
+        //         r.uuid as r_uuid,
+        //         q.question,
+        //         q.theme as question_theme,
+        //         q.domain as question_domain,
+        //         r.model as response_model,
+        //         r.content as response_content,
+        //         a.judge,
+        //         a.${judge1Classification},
+        //         ${judge1Classification!=judge2Classification? `a.${judge2Classification}`:''}
+        //         a.judge_analysis
+        //     FROM MismatchedResponses mr
+        //     JOIN responses r ON mr.r_uuid = r.uuid
+        //     JOIN questions q ON r.q_uuid = q.uuid
+        //     JOIN assessments a ON mr.r_uuid = a.r_uuid
+        //     WHERE
+        //         a.judge IN (?, ?) -- Only get assessments from the two judges in question
+        //     ORDER BY r.uuid;
+        // `;
+        // const params = [
+        //     judge1, judge2,  
+        //     theme, theme,
+        //     judge1, j1_compliance, 
+        //     judge2, j2_compliance,
+        //     judge1, judge2
+        // ];
+
         const sql = `
-            WITH MismatchedResponses AS (
-                SELECT a.r_uuid
-                FROM assessments a
-                JOIN responses r ON a.r_uuid = r.uuid
-                JOIN questions q ON r.q_uuid = q.uuid
-                WHERE 
-                    a.judge_model IN (?, ?) AND
-                    (? IS NULL OR q.theme = ?)
-                GROUP BY a.r_uuid
-                HAVING
-                    SUM(CASE WHEN a.judge_model = ? AND a.compliance = ? THEN 1 ELSE 0 END) > 0
-                    AND
-                    SUM(CASE WHEN a.judge_model = ? AND a.compliance = ? THEN 1 ELSE 0 END) > 0
-            )
             SELECT
-                r.uuid as r_uuid,
+                r.uuid AS r_uuid,
                 q.question,
-                q.theme as question_theme,
-                q.domain as question_domain,
-                r.model as response_model,
-                r.content as response_content,
-                a.judge_model,
-                a.compliance,
-                a.judge_analysis
-            FROM MismatchedResponses mr
-            JOIN responses r ON mr.r_uuid = r.uuid
+                q.theme AS question_theme,
+                q.domain AS question_domain,
+                r.model AS response_model,
+                r.content AS response_content,
+
+                a1.judge AS judge1_name,
+                a1.${judge1Classification} AS judge1_classification_value,
+                a1.judge_analysis AS judge1_analysis,
+
+                a2.judge AS judge2_name,
+                a2.${judge2Classification} AS judge2_classification_value,
+                a2.judge_analysis AS judge2_analysis
+            FROM assessments a1
+            
+            -- Join assessments for the second judge on the same response
+            JOIN assessments a2 ON a1.r_uuid = a2.r_uuid
+            
+            -- Join to get response and question details
+            JOIN responses r ON a1.r_uuid = r.uuid
             JOIN questions q ON r.q_uuid = q.uuid
-            JOIN assessments a ON mr.r_uuid = a.r_uuid
+            
             WHERE
-                a.judge_model IN (?, ?) -- Only get assessments from the two judges in question
-            ORDER BY r.uuid;
+                -- Filter for the first judge's specific assessment
+                a1.judge = ? AND a1.${judge1Classification} = ?
+                
+                -- Filter for the second judge's specific assessment
+                AND a2.judge = ? AND a2.${judge2Classification} = ?
+                
+                -- Optional theme filter
+                AND (? IS NULL OR q.theme = ?);
         `;
+
         const params = [
-            judge1, judge2,  
-            theme, theme,
-            judge1, j1_compliance, 
+            judge1, j1_compliance,
             judge2, j2_compliance,
-            judge1, judge2
+            theme, theme
         ];
+
         const rows = await db.query<any>(sql, ...params);
 
         // The grouping logic is identical
@@ -71,10 +121,16 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
                     assessments: {},
                 });
             }
-            resultsByResponse.get(row.r_uuid).assessments[row.judge_model] = {
-                compliance: row.compliance,
-                judge_analysis: row.judge_analysis,
+
+            resultsByResponse.get(row.r_uuid).assessments[row.judge1_name] = {
+                compliance: row.judge1_classification_value,
+                judge_analysis: row.judge1_analysis,
             };
+            resultsByResponse.get(row.r_uuid).assessments[row.judge2_name] = {
+                compliance: row.judge2_classification_value,
+                judge_analysis: row.judge2_analysis,
+            };
+            
         }
         jsonResponse(res, 200, Array.from(resultsByResponse.values()));
     } catch (error) {

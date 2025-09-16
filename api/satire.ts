@@ -19,21 +19,23 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
               r.model AS r_model,
               r.content,
               -- Pivot the compliance for the first judge into its own column
-              MAX(CASE WHEN a.judge_model = ? THEN a.uuid END) AS judge1_uuid,
-              MAX(CASE WHEN a.judge_model = ? THEN a.judge_model END) AS judge1_model,
-              MAX(CASE WHEN a.judge_model = ? THEN a.compliance END) AS judge1_compliance,
-              MAX(CASE WHEN a.judge_model = ? THEN a.judge_analysis END) AS judge1_analysis,
+              MAX(CASE WHEN a.judge = ? THEN a.uuid END) AS judge1_uuid,
+              MAX(CASE WHEN a.judge = ? THEN a.judge END) AS judge1_model,
+              MAX(CASE WHEN a.judge = ? THEN a.compliance END) AS judge1_compliance,
+              MAX(CASE WHEN a.judge = ? THEN a.pitti_compliance END) AS judge1_pitti_compliance,
+              MAX(CASE WHEN a.judge = ? THEN a.judge_analysis END) AS judge1_analysis,
               -- Pivot the compliance for the second judge into its own column
-              MAX(CASE WHEN a.judge_model = ? THEN a.uuid END) AS judge2_uuid,
-              MAX(CASE WHEN a.judge_model = ? THEN a.judge_model END) AS judge2_model,
-              MAX(CASE WHEN a.judge_model = ? THEN a.compliance END) AS judge2_compliance,
-              MAX(CASE WHEN a.judge_model = ? THEN a.judge_analysis END) AS judge2_analysis
+              MAX(CASE WHEN a.judge = ? THEN a.uuid END) AS judge2_uuid,
+              MAX(CASE WHEN a.judge = ? THEN a.judge END) AS judge2_model,
+              MAX(CASE WHEN a.judge = ? THEN a.compliance END) AS judge2_compliance,
+              MAX(CASE WHEN a.judge = ? THEN a.pitti_compliance END) AS judge2_pitti_compliance,
+              MAX(CASE WHEN a.judge = ? THEN a.judge_analysis END) AS judge2_analysis
           FROM questions q
           JOIN responses r ON r.q_uuid = q.uuid
           JOIN assessments a ON a.r_uuid = r.uuid
           WHERE
               q.question LIKE '%satirical%'
-              AND a.judge_model IN (?, ?) -- Pre-filter for only the two judges in question
+              AND a.judge IN (?, ?) -- Pre-filter for only the two judges in question
           GROUP BY
               q.uuid,
               q.question,
@@ -72,10 +74,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       judge1_uuid: string, 
       judge1_model: string,
       judge1_compliance: string,
+      judge1_pitti_compliance: string,
       judge1_analysis: string,
       judge2_uuid: string,
       judge2_model: string,
       judge2_compliance: string,
+      judge2_pitti_compliance: string,
       judge2_analysis: string
     }>(sql, ...params);
     jsonResponse(res, 200, rows);

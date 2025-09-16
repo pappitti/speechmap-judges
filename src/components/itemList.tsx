@@ -1,12 +1,43 @@
 import React, { useEffect, useState, useCallback, memo } from 'react';
 import ReactMarkdown from 'react-markdown';
-import type { AssessmentItemsProps, AssessmentItemProps} from '../types';
+import type { AssessmentItemsProps, AssessmentItemProps, PaginationProps} from '../types';
+
+const ITEMS_PER_PAGE = 50; 
 
 const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items, selectedCategory }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageInput, setPageInput] = useState('1');
+
   const [selectedRuuid, setSelectedRuuid] = useState<string | null>(null);
   const [selectedAssessment, setSelectedAssessment] = useState<string | null>(null);
 
-  const items_count = items.length;
+  const itemsCount = items.length;
+  const totalPages = Math.ceil(itemsCount / ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    setPageInput('1');
+  }, [items]);
+
+  useEffect(() => {
+    setPageInput(currentPage.toString());
+  }, [currentPage]);
+
+  const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPageInput(e.target.value);
+  };
+
+  const handlePageJump = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const pageNum = parseInt(pageInput, 10);
+      if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
+        setCurrentPage(pageNum);
+      } else {
+        // Reset input to current page if invalid
+        setPageInput(currentPage.toString());
+      }
+    }
+  };
 
   const handleSelect = useCallback((r_uuid: string, buttonValue: string) => {
     setSelectedRuuid(r_uuid);
@@ -22,11 +53,29 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items
     );
   }
 
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentItems = items.slice(startIndex, endIndex);
+
   return (
     <div className="assessment-items">
-      <h3>Assessment Details - {`${selectedCategory[0]} → ${selectedCategory[1]}`} ({items_count})</h3>
+      <div className="items-header">
+        <h3>Assessment Details - {`${selectedCategory[0]} → ${selectedCategory[1]}`} ({itemsCount})</h3>
+      
+        {totalPages > 1 && 
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageInput={pageInput}
+            handlePageInputChange={handlePageInputChange}
+            handlePageJump={handlePageJump}
+            setCurrentPage={setCurrentPage}
+          />
+        }
+      </div>
+      
       <div className="items-list">
-        {items.map((item) => 
+        {currentItems.map((item) => 
          // (item.response !== "(No Response Content)") &&
           (
             <AssessmentItem
@@ -41,6 +90,55 @@ const AssessmentItems: React.FC<AssessmentItemsProps> = ({ judge1, judge2, items
           )
         )}
       </div>
+      <div className="items-footer">
+        {totalPages > 1 && 
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageInput={pageInput}
+            handlePageInputChange={handlePageInputChange}
+            handlePageJump={handlePageJump}
+            setCurrentPage={setCurrentPage}
+          />
+        }
+      </div>
+    </div>
+  );
+};
+
+const PaginationControls: React.FC<PaginationProps> = (
+  { currentPage, 
+    totalPages, 
+    pageInput, 
+    handlePageInputChange, 
+    handlePageJump,
+    setCurrentPage 
+  }) => {
+  return (
+    <div className="pagination-controls">
+      <button className="assessment-btn" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+        &laquo; First
+      </button>
+      <button className="assessment-btn" onClick={() => setCurrentPage(prev => prev - 1)} disabled={currentPage === 1}>
+        ‹ Prev
+      </button>
+      <div className="page-jump">
+        <p>Page</p>
+        <input
+          type="text"
+          value={pageInput}
+          onChange={handlePageInputChange}
+          onKeyDown={handlePageJump}
+          className="page-input"
+        />
+        <p>of {totalPages}</p>
+      </div>
+      <button className="assessment-btn" onClick={() => setCurrentPage(prev =>  prev + 1 )} disabled={currentPage === totalPages}>
+        Next ›
+      </button>
+      <button className="assessment-btn" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+        Last &raquo;
+      </button>
     </div>
   );
 };
@@ -138,7 +236,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
         )}
       </div>
 
-      <div className="third-assessment">
+      {/* <div className="third-assessment">
         <div>
           <h4>Provide Human Assessment</h4>
           <p className="assessment-hint">Click to copy assessment tuple for response ID: <code>{item.r_uuid}</code></p>
@@ -174,7 +272,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
             {copied ? '✓ Copied!' : 'Copy'}
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 });

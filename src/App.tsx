@@ -1,26 +1,31 @@
-import { useState, useEffect } from 'react';
-import Waterfall from './components/Waterfall.js';
+import { useState, useEffect} from 'react';
+// import Waterfall from './components/Waterfall.js';
 import SankeyDiagram from './components/Sankey.js';
 import Heatmap from './components/Heatmap.js';
 import AssessmentItems from './components/itemList.js';
 import { getThemes, getJudges, getReclassificationData, getAssessmentItems } from './utils/apiUtils.js';
-import type { Theme, TransitionMatrix, AssessmentItem } from './types';
+import { modelSort } from './utils/chartUtils.js';
+import type { Theme, Judges, SelectedJudge, TransitionMatrix, AssessmentItem } from './types';
 import FilterBar from './components/Filterbar';
 
 function App() {
 
   const [themes, setThemes] = useState<Theme[]>([]);
-  const [judges, setJudges] = useState<string[]>([]);
+  const [judges, setJudges] = useState<Judges[]>([]);
   const [matrix, setMatrix] = useState<TransitionMatrix | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingItems, setLoadingItems] = useState(false);
 
   const [selectedTheme, setSelectedTheme] = useState<string>('');
-  const [selectedJudge1, setSelectedJudge1] = useState<string>('');
-  const [selectedJudge2, setSelectedJudge2] = useState<string>('');
+  const [selectedJudge1, setSelectedJudge1] = useState<SelectedJudge | null >(null);
+  const [selectedJudge2, setSelectedJudge2] = useState<SelectedJudge | null >(null);
   const [selectedCategory, setSelectedCategory] = useState<string[] | null>(null);
   const [selectedItems, setSelectedItems] = useState<AssessmentItem[]>([]);
+
+  const getFirstClassification = (judge: Judges): string => {
+    return Object.keys(judge.classifications).filter(key => judge.classifications[key] > 0)[0] || '';
+  };
 
   // Fetch initial data when the component mounts
   useEffect(() => {
@@ -31,12 +36,18 @@ function App() {
           getJudges()
         ]);
         setThemes(themesData);
-        setJudges(judgesData);
+        setJudges(judgesData.sort(modelSort));
 
         // Set default selections
         if (judgesData.length >= 2) {
-            setSelectedJudge1(judgesData[0]);
-            setSelectedJudge2(judgesData[1]);
+          setSelectedJudge1({
+            name: judgesData[0].name,
+            classification: getFirstClassification(judgesData[0]),
+          });
+          setSelectedJudge2({
+            name: judgesData[1].name,
+            classification: getFirstClassification(judgesData[1]),
+          });
         }
 
       } catch (err) {
@@ -56,7 +67,13 @@ function App() {
       setError(null);
       setMatrix(null);
       try {
-        const result = await getReclassificationData(selectedJudge1, selectedJudge2, selectedTheme);
+        const result = await getReclassificationData(
+          selectedJudge1.name,
+          selectedJudge1.classification,
+          selectedJudge2.name,
+          selectedJudge2.classification,
+          selectedTheme
+        );
         setMatrix(result);
         setSelectedItems([]); 
         setSelectedCategory(null); 
@@ -70,20 +87,61 @@ function App() {
     fetchData();
   }, [selectedTheme, selectedJudge1, selectedJudge2]);
 
+  const handleJudge1NameChange = (newName: string) => {
+    const newJudge = judges.find(j => j.name === newName);
+    if (newJudge) {
+      // When judge changes, reset classification to the first available one
+      setSelectedJudge1({
+        name: newName,
+        classification: getFirstClassification(newJudge),
+      });
+    }
+  };
+
+  const handleJudge1ClassificationChange = (newClassification: string) => {
+    if (selectedJudge1) {
+      setSelectedJudge1({ ...selectedJudge1, classification: newClassification });
+    }
+  };
+  
+  const handleJudge2NameChange = (newName: string) => {
+    const newJudge = judges.find(j => j.name === newName);
+    if (newJudge) {
+      setSelectedJudge2({
+        name: newName,
+        classification: getFirstClassification(newJudge),
+      });
+    }
+  };
+  
+  const handleJudge2ClassificationChange = (newClassification: string) => {
+    if (selectedJudge2) {
+      setSelectedJudge2({ ...selectedJudge2, classification: newClassification });
+    }
+  };
+
   // Handle cell click to fetch assessment items
-  const handleCellClick = (fromCategory: string, toCategory: string) => {
+  const handleCellClick = async (fromCategory: string, toCategory: string) => {
     if (selectedJudge1 && selectedJudge2 && fromCategory && toCategory) {
       setLoadingItems(true);
-      getAssessmentItems(selectedJudge1, selectedJudge2, fromCategory, toCategory, selectedTheme)
-        .then(setSelectedItems)
-        .catch(err => {
-          setError(err instanceof Error ? err.message : 'An unknown error occurred.');
-        })
-        .finally(() => {
-          setLoadingItems(false);
-        });
-
-      setSelectedCategory([fromCategory, toCategory]);
+      try {
+        const items = await getAssessmentItems(
+          selectedJudge1.name,
+          selectedJudge1.classification,
+          fromCategory, 
+          selectedJudge2.name, 
+          selectedJudge2.classification,
+          toCategory, 
+          selectedTheme
+        )
+        console.log("Fetched items:", items);
+        setSelectedItems(items);
+        setSelectedCategory([fromCategory, toCategory]);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+      } finally {
+        setLoadingItems(false);
+      };
     }
 
     return;
@@ -105,14 +163,16 @@ function App() {
 
       <main className="main-content">
           <FilterBar
-              themes={themes}
-              judges={judges}
-              selectedTheme={selectedTheme}
-              onThemeChange={setSelectedTheme}
-              selectedJudge1={selectedJudge1}
-              onJudge1Change={setSelectedJudge1}
-              selectedJudge2={selectedJudge2}
-              onJudge2Change={setSelectedJudge2}
+            themes={themes}
+            judges={judges}
+            selectedTheme={selectedTheme}
+            onThemeChange={setSelectedTheme}
+            selectedJudge1={selectedJudge1}
+            selectedJudge2={selectedJudge2}
+            onJudge1NameChange={handleJudge1NameChange}
+            onJudge1ClassificationChange={handleJudge1ClassificationChange}
+            onJudge2NameChange={handleJudge2NameChange}
+            onJudge2ClassificationChange={handleJudge2ClassificationChange}
           />
 
           {isLoading && (
@@ -124,24 +184,17 @@ function App() {
 
          {!isLoading && matrix && (
           <div className="charts-container">
-            {/* <Waterfall
-              matrix={matrix}
-              judge1={selectedJudge1}
-              judge2={selectedJudge2}
-              onCellClick={handleCellClick}
-            /> */}
-
             <SankeyDiagram
               matrix={matrix}
-              judge1={selectedJudge1}
-              judge2={selectedJudge2}
+              judge1={selectedJudge1!.name}
+              judge2={selectedJudge2!.name}
               onCellClick={handleCellClick}
             />
             
             <Heatmap
               matrix={matrix}
-              judge1={selectedJudge1}
-              judge2={selectedJudge2}
+              judge1={selectedJudge1!.name}
+              judge2={selectedJudge2!.name}
               onCellClick={handleCellClick}
             />
           </div>
@@ -149,8 +202,8 @@ function App() {
 
         {!loadingItems && selectedItems.length > 0 && (
           <AssessmentItems
-            judge1={selectedJudge1}
-            judge2={selectedJudge2}
+            judge1={selectedJudge1!.name}
+            judge2={selectedJudge2!.name}
             items={selectedItems}
             selectedCategory={selectedCategory}
           />

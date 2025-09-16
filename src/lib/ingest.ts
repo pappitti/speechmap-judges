@@ -9,8 +9,8 @@ const DB_PATH = path.join(ROOT_DIR, 'database.duckdb');
 
 export const DATA_SOURCES = {
   questions: 'https://huggingface.co/datasets/PITTI/speechmap-questions/resolve/main/consolidated_questions.parquet',
-  responses: 'https://huggingface.co/datasets/PITTI/speechmap-responses/resolve/main/consolidated_responses.parquet',
-  assessments: 'https://huggingface.co/datasets/PITTI/speechmap-assessments/resolve/main/consolidated_assessments.parquet',
+  responses: 'https://huggingface.co/datasets/PITTI/speechmap-responses-v2/resolve/main/consolidated_responses.parquet',
+  assessments: 'https://huggingface.co/datasets/PITTI/speechmap-assessments-v2/resolve/main/consolidated_assessments.parquet',
 };
 
 
@@ -45,13 +45,15 @@ async function rebuildDatabase() {
         CREATE TABLE themes (slug VARCHAR PRIMARY KEY, name VARCHAR);
         CREATE TABLE questions (uuid VARCHAR PRIMARY KEY, id VARCHAR, category VARCHAR, domain VARCHAR, question VARCHAR, theme VARCHAR);
         CREATE TABLE responses (uuid VARCHAR PRIMARY KEY, q_uuid VARCHAR, model VARCHAR, timestamp VARCHAR, api_provider VARCHAR, provider VARCHAR, content VARCHAR, matched BOOLEAN, origin VARCHAR);
-        CREATE TABLE assessments (uuid VARCHAR PRIMARY KEY, q_uuid VARCHAR, r_uuid VARCHAR, judge_model VARCHAR, judge_analysis VARCHAR, compliance VARCHAR, raw_judge_analysis VARCHAR, matched BOOLEAN, origin VARCHAR);
+        CREATE TABLE assessments (uuid VARCHAR PRIMARY KEY, q_uuid VARCHAR, r_uuid VARCHAR, judge VARCHAR, judge_type VARCHAR, judge_analysis VARCHAR, compliance VARCHAR, pitti_compliance VARCHAR, origin VARCHAR);
     `);
     console.log('Schema created.');
 
     console.log('Creating indexes for faster queries...');
     await query(db, `CREATE INDEX idx_assessments_r_uuid ON assessments (r_uuid);`);
-    await query(db, `CREATE INDEX idx_assessments_judge_compliance ON assessments (judge_model, compliance);`);
+    await query(db, `CREATE INDEX idx_assessments_judge_judge_type ON assessments (judge, judge_type);`);
+    await query(db, `CREATE INDEX idx_assessments_judge_compliance ON assessments (judge, compliance);`);
+    await query(db, `CREATE INDEX idx_assessments_pitti_compliance ON assessments (judge, pitti_compliance);`);
     await query(db, `CREATE INDEX idx_responses_q_uuid ON responses (q_uuid);`);
     await query(db, `CREATE INDEX idx_questions_theme ON questions (theme);`);
     console.log('Indexes created.');
@@ -73,8 +75,8 @@ async function rebuildDatabase() {
 
     console.log('Ingesting assessments...');
     await query(db, `
-        INSERT INTO assessments (uuid, q_uuid, r_uuid, judge_model, judge_analysis, compliance, raw_judge_analysis, matched, origin)
-        SELECT uuid, q_uuid, r_uuid, judge_model, judge_analysis, compliance, raw_judge_analysis, matched, origin FROM read_parquet('${DATA_SOURCES.assessments}');
+        INSERT INTO assessments (uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin)
+        SELECT uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin FROM read_parquet('${DATA_SOURCES.assessments}');
     `);
 
     console.log('✅ Data ingestion complete!');

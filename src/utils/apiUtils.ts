@@ -1,4 +1,4 @@
-import type { Theme, TransitionMatrix, AssessmentItem, ApiError } from '../types.js';
+import type { Theme, Judges, TransitionMatrix, AssessmentItem, ApiError } from '../types.js';
 
 
 
@@ -23,20 +23,24 @@ export const getThemes = (): Promise<Theme[]> => {
 };
 
 
-export const getJudges = (): Promise<string[]> => {
-  return fetchAPI<string[]>('/api/judges');
+export const getJudges = async (): Promise<Judges[]> => {
+  return fetchAPI<Judges[]>('/api/judges')
 };
 
 
 export const getReclassificationData = (
   judge1: string,
+  judge1Classification: string,
   judge2: string,
+  judge2Classification: string,
   theme?: string
 ): Promise<TransitionMatrix> => {
   // Build the query string from the parameters
   const params = new URLSearchParams({
     judge1,
+    judge1Classification,
     judge2,
+    judge2Classification
   });
 
   // Only add the theme parameter if it's provided
@@ -50,16 +54,20 @@ export const getReclassificationData = (
 
 export const getAssessmentItems = (
   judge1: string,
-  judge2: string,
+  judge1Classification: string,
   fromCategory: string,
+  judge2: string,
+  judge2Classification: string,
   toCategory: string,
   theme?: string
 ): Promise<any[]> => {
 
   const params = new URLSearchParams({
     judge1,
-    judge2,
+    judge1Classification,
     fromCategory,
+    judge2,
+    judge2Classification,
     toCategory,
   });
 
