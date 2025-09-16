@@ -235,8 +235,8 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
           <p>No assessments available</p>
         )}
       </div>
-
-      {/* <div className="third-assessment">
+{/* 
+      <div className="third-assessment">
         <div>
           <h4>Provide Human Assessment</h4>
           <p className="assessment-hint">Click to copy assessment tuple for response ID: <code>{item.r_uuid}</code></p>
