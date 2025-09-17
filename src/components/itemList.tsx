@@ -235,7 +235,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
           <p>No assessments available</p>
         )}
       </div>
-{/* 
+
       <div className="third-assessment">
         <div>
           <h4>Provide Human Assessment</h4>
@@ -272,7 +272,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
             {copied ? '✓ Copied!' : 'Copy'}
           </button>
         </div>
-      )} */}
+      )}
     </div>
   );
 });
