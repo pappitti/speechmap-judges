@@ -1,6 +1,15 @@
+---
+title: LLM Assessment Explorer
+emoji: 🫣
+colorFrom: purple
+colorTo: gray
+sdk: docker
+app_port: 7860
+---  
+
 # LLM Assessment Explorer
 
-[Speechmap-judges Demo](https://github.com/user-attachments/assets/97da33fe-b033-4de5-886f-06fda8a0534c)
+[Speechmap-judges Demo](https://github.com/user-attachments/assets/f94f0ef9-7ad6-419d-823a-56e828061092)
 
 An interactive TypeScript app for exploring and comparing differences in Large Language Model (LLM) assessments. This tool helps visualize how different "judge" models classify the same LLM-generated responses, providing deep insights into inter-rater reliability and model behavior.
 
