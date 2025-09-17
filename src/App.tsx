@@ -134,7 +134,6 @@ function App() {
           toCategory, 
           selectedTheme
         )
-        console.log("Fetched items:", items);
         setSelectedItems(items);
         setSelectedCategory([fromCategory, toCategory]);
       } catch (err) {
