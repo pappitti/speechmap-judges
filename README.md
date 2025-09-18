@@ -5,9 +5,9 @@ colorFrom: purple
 colorTo: indigo  
 sdk: docker  
 app_port: 7860  
-datasets: [https://huggingface.co/datasets/PITTI/speechmap-questions, https://huggingface.co/datasets/PITTI/speechmap-responses-v2, https://huggingface.co/datasets/PITTI/speechmap-assessments-v2]
+datasets: [https://huggingface.co/datasets/PITTI/speechmap-questions, https://huggingface.co/datasets/PITTI/speechmap-responses-v2, https://huggingface.co/datasets/PITTI/speechmap-assessments-v2]  
 license: apache-2.0  
-short_description: Explore LLM moderation profiles and how judges classify their outputs 
+short_description: Explore LLM moderation profiles and how judges classify their outputs  
 pinned: false  
 --- 
 
