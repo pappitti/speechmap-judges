@@ -7,8 +7,8 @@ sdk: docker
 app_port: 7860
 pinned: false
 license: apache-2.0
-short_description: Explore LLM moderation profiles and how differently judges classify LLM outputs
----  
+short_description: Explore LLM moderation profiles and how judges classify their outputs
+--- 
 
 # LLM Assessment Explorer
 
@@ -48,7 +48,7 @@ You need to have [Node.js](https://nodejs.org/) (which includes npm) installed o
     cd speechmap-judges
     ```
 
-2.  **Vite Dev Mode**
+2.  **Vite Dev Mode**  
     **Install Dependencies:** 
     ```sh
     npm install
