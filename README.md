@@ -2,9 +2,12 @@
 title: LLM Assessment Explorer
 emoji: 🫣
 colorFrom: purple
-colorTo: gray
+colorTo: indigo
 sdk: docker
 app_port: 7860
+pinned: false
+license: apache-2.0
+short_description: Explore LLM moderation profiles and how differently judges classify LLM outputs
 ---  
 
 # LLM Assessment Explorer
