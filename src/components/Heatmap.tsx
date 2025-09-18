@@ -55,9 +55,9 @@ const Heatmap: React.FC<HeatmapProps> = ({ matrix, judge1, judge2, onCellClick }
                         <div
                         key={`${fromCat}-${toCat}`}
                         className="heatmap-cell"
-                        onClick={() => value < 10000 
+                        onClick={() => value < 100000 
                           ? onCellClick(fromCat, toCat)
-                          : alert("Details only available for values < 10000. Please refine your selection.")
+                          : alert("Details only available for values < 100000. Please refine your selection.")
                         }
                         title={`${fromCat} → ${toCat}: ${value}`}
                         >

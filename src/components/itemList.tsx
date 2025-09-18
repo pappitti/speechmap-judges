@@ -236,7 +236,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
         )}
       </div>
 
-      <div className="third-assessment">
+      {/* <div className="third-assessment">
         <div>
           <h4>Provide Human Assessment</h4>
           <p className="assessment-hint">Click to copy assessment tuple for response ID: <code>{item.r_uuid}</code></p>
@@ -272,7 +272,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
             {copied ? '✓ Copied!' : 'Copy'}
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 });

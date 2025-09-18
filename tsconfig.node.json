@@ -28,6 +28,7 @@
     "vite.config.ts", 
     "src/types.ts",
     "api/**/*.ts", 
-    "src/lib/**/*.ts"
+    "src/lib/**/*.ts",
+    "server.ts"
   ]
 }

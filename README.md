@@ -45,12 +45,13 @@ You need to have [Node.js](https://nodejs.org/) (which includes npm) installed o
     cd speechmap-judges
     ```
 
-2.  **Install dependencies:**
+2.  **Vite Dev Mode**
+    **Install Dependencies:** 
     ```sh
     npm install
     ```
 
-3.  **Fetch Data and Build the Database:**  
+    **Fetch Data and Build the Database:**  
     This command downloads the Parquet datasets from Hugging Face and creates a local `database.duckdb` file at the root of the project.
 
     ```sh
@@ -59,13 +60,25 @@ You need to have [Node.js](https://nodejs.org/) (which includes npm) installed o
     This project includes a branch running on duckdb-wasm. That branch does not require this step 3 : you can run `npm run dev` directly after `npm install` (or `npm run build` and then `npm run preview` for production). However, that branch was never merged with the main branch because database persistence is tricky with duckdb-wasm so, right now, the database must be built again each time the app is started, which is really bad UX. IndexedDB is not an option ; more work is required on that branch.  
     _Also, duckdb-wasm in not as fast as expected for a database of this size_
 
-4.  **Run the application:**  
+    **Run the application:**  
     This command starts the React frontend development server.
 
     ```sh
     npm run dev
     ```
     Open [http://localhost:5173](http://localhost:5173) (or the URL provided in your terminal) to view it in your browser.
+
+3.  **Production Build (Docker)**
+    ```sh
+    docker build -t speechmap-judges-prod .
+    ```
+
+    **Run the application:**
+    ```sh
+    docker run -p 7860:7860 --rm --name speechmap-judges-container speechmap-judges-prod
+    ```
+    Open [http://localhost:7860](http://localhost:7860) to view it in your browser.
+
 
 ## Acknowledgments
 

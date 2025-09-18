@@ -6,18 +6,21 @@
     "recompile": "tsc --project tsconfig.node.json",
     "db:rebuild": "tsc --project tsconfig.node.json && node dist/src/lib/ingest.js",
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && tsc --project tsconfig.node.json",
+    "start": "node dist/server.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "duckdb": "^1.3.1",
+    "express": "^5.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-markdown": "8.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
+    "@types/express": "^5.0.3",
     "@types/node": "^24.0.7",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
