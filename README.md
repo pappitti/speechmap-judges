@@ -7,7 +7,7 @@ sdk: docker
 app_port: 7860
 pinned: false
 license: apache-2.0
-short_description: LLM moderation profiles and how judges classify their outputs
+short_description: LLM moderation profiles and judges classification
 datasets:
   - PITTI/speechmap-questions
   - PITTI/speechmap-responses-v2
