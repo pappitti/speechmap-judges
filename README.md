@@ -1,15 +1,18 @@
 ---
-title: LLM Assessment Explorer  
-emoji: 🫣  
-colorFrom: purple  
-colorTo: indigo  
-sdk: docker  
-app_port: 7860  
-datasets: [https://huggingface.co/datasets/PITTI/speechmap-questions, https://huggingface.co/datasets/PITTI/speechmap-responses-v2, https://huggingface.co/datasets/PITTI/speechmap-assessments-v2]  
-license: apache-2.0  
-short_description: Explore LLM moderation profiles and how judges classify their outputs  
-pinned: false  
---- 
+title: LLM Assessment Explorer
+emoji: 🫣
+colorFrom: purple
+colorTo: indigo
+sdk: docker
+app_port: 7860
+pinned: false
+license: apache-2.0
+short_description: LLM moderation profiles and how judges classify their outputs
+datasets:
+  - PITTI/speechmap-questions
+  - PITTI/speechmap-responses-v2
+  - PITTI/speechmap-assessments-v2
+---
 
 # LLM Assessment Explorer
 
