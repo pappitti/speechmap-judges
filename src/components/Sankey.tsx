@@ -218,9 +218,9 @@ const SankeyDiagram: React.FC<SankeyDiagramProps> = ({ matrix, judge1, judge2, o
                                             strokeWidth={link.strokeWidth}
                                             fill="none"
                                             className="sankey-link"
-                                            onClick={() => link.value < 10000 
+                                            onClick={() => link.value < 100000 
                                             ? onCellClick(link.from, link.to)
-                                            : alert("Details only available for values < 10000. Please refine your selection.")
+                                            : alert("Details only available for values < 100000. Please refine your selection.")
                                             }
                                         >
                                             <title>{`${link.from} → ${link.to}: ${link.value}`}</title>

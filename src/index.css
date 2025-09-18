@@ -560,6 +560,11 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.item-question-header h4 {
+  margin: 0;
 }
 
 .metadata {

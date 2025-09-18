@@ -1,0 +1,27 @@
+# Git files
+.git
+.gitignore
+
+# Local dependencies
+node_modules
+
+# Build artifacts (these will be generated *inside* the container)
+dist
+.DS_Store
+
+# IDE and temporary files
+.vscode
+.idea
+.tmp
+
+# Log files
+*.log
+
+# database files
+*.duckdb
+
+# data files
+data/*
+
+# environment files
+.env

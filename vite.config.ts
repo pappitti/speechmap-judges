@@ -4,10 +4,11 @@ import path from 'path';
 
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
-    {
+    // This plugin will only be used in development ('npm run dev')
+    command === 'serve' && {
       name: 'custom-api-server',
       configureServer(server) {
         server.middlewares.use(async (req, res, next) => {
@@ -43,4 +44,4 @@ export default defineConfig({
     },
   ],
   
-})
+}));

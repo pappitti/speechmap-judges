@@ -28,7 +28,7 @@ lerna-debug.log*
 # database files
 *.duckdb
 
-# data filesd
+# data files
 data/*
 
 # environment files
