@@ -3,21 +3,23 @@ import { useState, useEffect} from 'react';
 import SankeyDiagram from './components/Sankey.js';
 import Heatmap from './components/Heatmap.js';
 import AssessmentItems from './components/itemList.js';
-import { getThemes, getJudges, getReclassificationData, getAssessmentItems } from './utils/apiUtils.js';
+import { getThemes, getJudges, getReclassificationData, getAssessmentItems, getModels } from './utils/apiUtils.js';
 import { modelSort } from './utils/chartUtils.js';
-import type { Theme, Judges, SelectedJudge, TransitionMatrix, AssessmentItem } from './types';
+import type { Theme, Judges, Model, SelectedJudge, TransitionMatrix, AssessmentItem } from './types';
 import FilterBar from './components/Filterbar';
 
 function App() {
 
   const [themes, setThemes] = useState<Theme[]>([]);
   const [judges, setJudges] = useState<Judges[]>([]);
+  const [models, setModels] = useState<Model[]>([]);
   const [matrix, setMatrix] = useState<TransitionMatrix | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingItems, setLoadingItems] = useState(false);
 
   const [selectedTheme, setSelectedTheme] = useState<string>('');
+  const [selectedModel, setSelectedModel] = useState<string>('');
   const [selectedJudge1, setSelectedJudge1] = useState<SelectedJudge | null >(null);
   const [selectedJudge2, setSelectedJudge2] = useState<SelectedJudge | null >(null);
   const [selectedCategory, setSelectedCategory] = useState<string[] | null>(null);
@@ -31,12 +33,14 @@ function App() {
   useEffect(() => {
     const loadFilters = async () => {
       try {
-        const [themesData, judgesData] = await Promise.all([
+        const [themesData, judgesData, modelsData] = await Promise.all([
           getThemes(),
-          getJudges()
+          getJudges(),
+          getModels()
         ]);
         setThemes(themesData);
         setJudges(judgesData.sort(modelSort));
+        setModels(modelsData);
 
         // Set default selections
         if (judgesData.length >= 2) {
@@ -72,7 +76,8 @@ function App() {
           selectedJudge1.classification,
           selectedJudge2.name,
           selectedJudge2.classification,
-          selectedTheme
+          selectedTheme,
+          selectedModel
         );
         setMatrix(result);
         setSelectedItems([]); 
@@ -85,7 +90,7 @@ function App() {
     };
 
     fetchData();
-  }, [selectedTheme, selectedJudge1, selectedJudge2]);
+  }, [selectedTheme, selectedJudge1, selectedJudge2, selectedModel]);
 
   const handleJudge1NameChange = (newName: string) => {
     const newJudge = judges.find(j => j.name === newName);
@@ -132,7 +137,8 @@ function App() {
           selectedJudge2.name, 
           selectedJudge2.classification,
           toCategory, 
-          selectedTheme
+          selectedTheme,
+          selectedModel
         )
         setSelectedItems(items);
         setSelectedCategory([fromCategory, toCategory]);
@@ -164,8 +170,11 @@ function App() {
           <FilterBar
             themes={themes}
             judges={judges}
+            models={models}
             selectedTheme={selectedTheme}
             onThemeChange={setSelectedTheme}
+            selectedModel={selectedModel}
+            onModelChange={setSelectedModel}
             selectedJudge1={selectedJudge1}
             selectedJudge2={selectedJudge2}
             onJudge1NameChange={handleJudge1NameChange}

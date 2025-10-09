@@ -11,6 +11,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const judge2Classification = url.searchParams.get('judge2Classification');
     const j2_compliance = url.searchParams.get('toCategory');
     const theme = url.searchParams.get('theme') || null;
+    const model = url.searchParams.get('model') || null;
 
     if (!judge1 || !j1_compliance || !judge2 || !j2_compliance || !judge1Classification || !judge2Classification) {
         return jsonResponse(res, 400, { error: 'judge1, j1_compliance, judge2, and j2_compliance are required.' });
@@ -95,14 +96,15 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
                 -- Filter for the second judge's specific assessment
                 AND a2.judge = ? AND a2.${judge2Classification} = ?
                 
-                -- Optional theme filter
-                AND (? IS NULL OR q.theme = ?);
+                -- Optional theme filter and model filter
+                AND (? IS NULL OR q.theme = ?) AND (? IS NULL OR r.model = ?);
         `;
 
         const params = [
             judge1, j1_compliance,
             judge2, j2_compliance,
-            theme, theme
+            theme, theme,
+            model, model
         ];
 
         const rows = await db.query<any>(sql, ...params);

@@ -1,4 +1,4 @@
-import type { Theme, Judges, TransitionMatrix, AssessmentItem, ApiError } from '../types.js';
+import type { Theme, Judges, Model, TransitionMatrix, AssessmentItem, ApiError } from '../types.js';
 
 
 
@@ -27,13 +27,18 @@ export const getJudges = async (): Promise<Judges[]> => {
   return fetchAPI<Judges[]>('/api/judges')
 };
 
+export const getModels = async (): Promise<Model[]> => {
+  return fetchAPI<Model[]>('/api/models')
+}
+
 
 export const getReclassificationData = (
   judge1: string,
   judge1Classification: string,
   judge2: string,
   judge2Classification: string,
-  theme?: string
+  theme?: string,
+  model?: string
 ): Promise<TransitionMatrix> => {
   // Build the query string from the parameters
   const params = new URLSearchParams({
@@ -47,6 +52,9 @@ export const getReclassificationData = (
   if (theme) {
     params.append('theme', theme);
   }
+  if (model) {
+    params.append('model', model);
+  }
 
   return fetchAPI<TransitionMatrix>(`/api/reclassification?${params.toString()}`);
 };
@@ -59,7 +67,8 @@ export const getAssessmentItems = (
   judge2: string,
   judge2Classification: string,
   toCategory: string,
-  theme?: string
+  theme?: string,
+  model?: string
 ): Promise<any[]> => {
 
   const params = new URLSearchParams({
@@ -73,6 +82,9 @@ export const getAssessmentItems = (
 
   if (theme) {
     params.append('theme', theme);
+  }
+  if (model) {
+    params.append('model', model);
   }
 
   return fetchAPI<AssessmentItem[]>(`/api/mismatches?${params.toString()}`);

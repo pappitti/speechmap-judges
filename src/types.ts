@@ -36,6 +36,10 @@ export interface Theme {
   name: string; // Human-readable name for the theme
 }
 
+export interface Model {
+  model:string;
+}
+
 export interface Judges {
   name: string;
   judge_type: string; // human or LLM
@@ -76,8 +80,11 @@ export interface AssessmentItem {
 export interface FilterBarProps {
   themes: Theme[];
   judges: Judges[];
+  models: Model[];
   selectedTheme: string;
   onThemeChange: (value: string) => void;
+  selectedModel: string;
+  onModelChange: (value: string) => void;
   selectedJudge1: SelectedJudge | null;
   selectedJudge2: SelectedJudge | null;
   onJudge1NameChange : (value: string) => void;

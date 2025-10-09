@@ -11,6 +11,8 @@ export const DATA_SOURCES = {
   questions: 'https://huggingface.co/datasets/PITTI/speechmap-questions/resolve/main/consolidated_questions.parquet',
   responses: 'https://huggingface.co/datasets/PITTI/speechmap-responses-v2/resolve/main/consolidated_responses.parquet',
   assessments: 'https://huggingface.co/datasets/PITTI/speechmap-assessments-v2/resolve/main/consolidated_assessments.parquet',
+  // manual : './data/manual_assessments.parquet',// Local file for manual assessments
+  // reviewed : './data/reviewed_assessments.parquet' // Local file for reviewed assessments
 };
 
 
@@ -78,6 +80,37 @@ async function rebuildDatabase() {
         INSERT INTO assessments (uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin)
         SELECT uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin FROM read_parquet('${DATA_SOURCES.assessments}');
     `);
+
+    // console.log('Updating manual assessments from local parquet file...');
+    // const manualDataPath = path.resolve(ROOT_DIR, DATA_SOURCES.manual);
+    // if (fs.existsSync(manualDataPath)) {
+    //   await query(db, `
+    //     INSERT INTO assessments (uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin)
+    //     SELECT uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin FROM read_parquet('${manualDataPath}')
+    //     ON CONFLICT (uuid) DO UPDATE SET
+    //         q_uuid = excluded.q_uuid,
+    //         r_uuid = excluded.r_uuid,
+    //         judge = excluded.judge,
+    //         judge_type = excluded.judge_type,
+    //         judge_analysis = excluded.judge_analysis,
+    //         compliance = excluded.compliance,
+    //         pitti_compliance = excluded.pitti_compliance,
+    //         origin = excluded.origin;
+    // `);
+    // } else {
+    //   console.warn(`Manual assessments file not found at ${manualDataPath}, skipping...`);
+    // }
+
+    // console.log('Updating reviewed assessments from local parquet file...');
+    // const reviewedDataPath = path.resolve(ROOT_DIR, DATA_SOURCES.reviewed);
+    // if (fs.existsSync(reviewedDataPath)) {
+    //   await query(db, `
+    //     INSERT INTO assessments (uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin)
+    //     SELECT CAST(uuid AS VARCHAR) || 'n' AS uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin FROM read_parquet('${reviewedDataPath}')
+    //   `);
+    // } else {
+    //   console.warn(`Reviewed assessments file not found at ${reviewedDataPath}, skipping...`);
+    // }
 
     console.log('✅ Data ingestion complete!');
   } catch (error) {

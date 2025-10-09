@@ -116,11 +116,11 @@ const PaginationControls: React.FC<PaginationProps> = (
   }) => {
   return (
     <div className="pagination-controls">
-      <button className="assessment-btn" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
-        &laquo; First
+      <button className="assessment-btn pagination-btn" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
+        &laquo; <span>First</span>
       </button>
-      <button className="assessment-btn" onClick={() => setCurrentPage(prev => prev - 1)} disabled={currentPage === 1}>
-        ‹ Prev
+      <button className="assessment-btn pagination-btn" onClick={() => setCurrentPage(prev => prev - 1)} disabled={currentPage === 1}>
+        ‹ <span>Prev</span>
       </button>
       <div className="page-jump">
         <p>Page</p>
@@ -133,11 +133,11 @@ const PaginationControls: React.FC<PaginationProps> = (
         />
         <p>of {totalPages}</p>
       </div>
-      <button className="assessment-btn" onClick={() => setCurrentPage(prev =>  prev + 1 )} disabled={currentPage === totalPages}>
-        Next ›
+      <button className="assessment-btn pagination-btn" onClick={() => setCurrentPage(prev =>  prev + 1 )} disabled={currentPage === totalPages}>
+        <span>Next</span> ›
       </button>
-      <button className="assessment-btn" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
-        Last &raquo;
+      <button className="assessment-btn pagination-btn" onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
+        <span>Last</span> &raquo;
       </button>
     </div>
   );

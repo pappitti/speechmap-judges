@@ -968,6 +968,27 @@ h4 {
   }
 }
 
+@media (max-width: 480px) {
+  .item-question-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .metadata strong {
+    display: none;
+  }
+
+  .pagination-btn span {
+    display: none;
+  }
+
+  .sankey-container, .heatmap-container {
+    padding: 1rem;
+    min-width: 330px;
+  }
+}
+
 /* Animation for loading states */
 @keyframes pulse {
   0%, 100% {

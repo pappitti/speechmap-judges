@@ -1,12 +1,15 @@
-import type { FilterBarProps, Judges } from '../types.js';
+import type { FilterBarProps, Judges, Model } from '../types.js';
 
 const findJudgeByName = (judges: Judges[], name: string) => judges.find(j => j.name === name);
 
 const FilterBar: React.FC<FilterBarProps> = ({
   themes,
   judges,
+  models,
   selectedTheme,
   onThemeChange,
+  selectedModel,
+  onModelChange,
   selectedJudge1,
   selectedJudge2,
   onJudge1NameChange,
@@ -32,6 +35,22 @@ const FilterBar: React.FC<FilterBarProps> = ({
             {themes.map((theme) => (
               <option key={theme.slug} value={theme.slug}>
                 {theme.slug} ({theme.name})
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='model-select'>Model</label>
+          <select 
+            className="filter-select"
+            id='model-select'
+            value={selectedModel}
+            onChange={(e) => onModelChange(e.target.value)}
+          >
+            <option value="">All Models</option>
+            {models.map((model) => (
+              <option key={model.model} value={model.model}>
+                {model.model}
               </option>
             ))}
           </select>
