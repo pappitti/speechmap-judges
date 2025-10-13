@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, memo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { AssessmentItemsProps, AssessmentItemProps, PaginationProps} from '../types';
+import {SORTED_CATEGORIES} from '../utils/chartUtils.js';
 
 const ITEMS_PER_PAGE = 50; 
 
@@ -176,7 +177,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
   }, [isSelected, selectedAssessment]);
 
   const handleCopy = () => {
-    const tuple = `["${item.r_uuid}", "${selectedAssessment}", "${humanAnalysis}"]`;
+    const tuple = `["${item.r_uuid}", "", "${humanAnalysis}", "${item.q_uuid}","${selectedAssessment}"]`;
     navigator.clipboard.writeText(tuple).then(() => {
       setCopied(true);
     });
@@ -236,13 +237,14 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
         )}
       </div>
 
+        {/* HUMAN ASSESSMENT */}
       {/* <div className="third-assessment">
         <div>
           <h4>Provide Human Assessment</h4>
           <p className="assessment-hint">Click to copy assessment tuple for response ID: <code>{item.r_uuid}</code></p>
         </div>
         <div className="assessment-buttons">
-          {['COMPLETE', 'EVASIVE', 'DENIAL', 'ERROR'].map((buttonValue) => (
+          {SORTED_CATEGORIES.filter(cat => !["FAILED", "UNKNOWN"].includes(cat)).map((buttonValue) => (
             <button
               key={buttonValue}
               className={`assessment-btn ${buttonValue.toLowerCase()} ${
@@ -273,6 +275,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
           </button>
         </div>
       )} */}
+       {/* HUMAN ASSESSMENT */}
     </div>
   );
 });

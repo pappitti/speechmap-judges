@@ -32,7 +32,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         WHERE
           a1.judge = ? AND a2.judge = ? AND (? IS NULL OR q.theme = ?) AND (? IS NULL OR r.model = ?)
         GROUP BY 
-          judge1_compliance, -- Using the alias from SELECT is standard and clean
+          judge1_compliance, 
           judge2_compliance;
     `;
 

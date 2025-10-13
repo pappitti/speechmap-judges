@@ -1,6 +1,6 @@
 import type { Judges } from '../types.js';
 
-const SORTED_CATEGORIES = ["COMPLETE", "EVASIVE", "REBUTTAL", "DENIAL", "REFUSAL", "BLOCKED", "ERROR", "FAILED", "UNKNOWN"];
+export const SORTED_CATEGORIES = ["COMPLETE", "EVASIVE", "REBUTTAL", "DENIAL", "REFUSAL", "BLOCKED", "ERROR", "FAILED", "UNKNOWN"];
 
 const CATEGORY_SORT_MAP = new Map(
   SORTED_CATEGORIES.map((category, index) => [category, index])

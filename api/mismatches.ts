@@ -68,6 +68,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             SELECT
                 r.uuid AS r_uuid,
                 q.question,
+                r.q_uuid AS q_uuid,
                 q.theme AS question_theme,
                 q.domain AS question_domain,
                 r.model AS response_model,
@@ -115,6 +116,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             if (!resultsByResponse.has(row.r_uuid)) {
                 resultsByResponse.set(row.r_uuid, {
                     question: row.question,
+                    q_uuid: row.q_uuid,
                     theme: row.question_theme,
                     domain: row.question_domain,
                     model: row.response_model,

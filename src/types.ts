@@ -69,6 +69,7 @@ export interface PaginationProps {
 
 export interface AssessmentItem {
   question: string;
+  q_uuid: string;
   theme: string;
   domain: string;
   r_uuid: string; 
