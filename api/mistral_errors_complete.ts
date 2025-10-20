@@ -22,48 +22,6 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     
     try {
-        // const sql = `
-        //     WITH MismatchedResponses AS (
-        //         SELECT a.r_uuid
-        //         FROM assessments a
-        //         JOIN responses r ON a.r_uuid = r.uuid
-        //         JOIN questions q ON r.q_uuid = q.uuid
-        //         WHERE 
-        //             a.judge IN (?, ?) AND
-        //             (? IS NULL OR q.theme = ?)
-        //         GROUP BY a.r_uuid
-        //         HAVING
-        //             SUM(CASE WHEN a.judge = ? AND a.${judge1Classification} = ? THEN 1 ELSE 0 END) > 0
-        //             AND
-        //             SUM(CASE WHEN a.judge = ? AND a.${judge2Classification} = ? THEN 1 ELSE 0 END) > 0
-        //     )
-        //     SELECT
-        //         r.uuid as r_uuid,
-        //         q.question,
-        //         q.theme as question_theme,
-        //         q.domain as question_domain,
-        //         r.model as response_model,
-        //         r.content as response_content,
-        //         a.judge,
-        //         a.${judge1Classification},
-        //         ${judge1Classification!=judge2Classification? `a.${judge2Classification}`:''}
-        //         a.judge_analysis
-        //     FROM MismatchedResponses mr
-        //     JOIN responses r ON mr.r_uuid = r.uuid
-        //     JOIN questions q ON r.q_uuid = q.uuid
-        //     JOIN assessments a ON mr.r_uuid = a.r_uuid
-        //     WHERE
-        //         a.judge IN (?, ?) -- Only get assessments from the two judges in question
-        //     ORDER BY r.uuid;
-        // `;
-        // const params = [
-        //     judge1, judge2,  
-        //     theme, theme,
-        //     judge1, j1_compliance, 
-        //     judge2, j2_compliance,
-        //     judge1, judge2
-        // ];
-
         const sql = `
             SELECT
                 r.uuid AS r_uuid,
@@ -120,27 +78,14 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         const resultsByResponse = new Map<string, any>();
         for (const row of rows) {
             if (!resultsByResponse.has(row.r_uuid)) {
-                resultsByResponse.set(row.r_uuid, {
-                    question: row.question,
-                    q_uuid: row.q_uuid,
-                    theme: row.question_theme,
-                    domain: row.question_domain,
-                    model: row.response_model,
-                    r_uuid: row.r_uuid,
-                    response: row.response_content,
-                    assessments: {},
-                });
+                resultsByResponse.set(row.r_uuid, [
+                    row.r_uuid,
+                    row.judge1_classification_value,
+                    row.judge1_analysis,
+                    row.q_uuid,
+                    row.judge1_classification_value,
+                ]);
             }
-
-            resultsByResponse.get(row.r_uuid).assessments[row.judge1_name] = {
-                compliance: row.judge1_classification_value,
-                judge_analysis: row.judge1_analysis,
-            };
-            resultsByResponse.get(row.r_uuid).assessments[row.judge2_name] = {
-                compliance: row.judge2_classification_value,
-                judge_analysis: row.judge2_analysis,
-            };
-            
         }
         jsonResponse(res, 200, Array.from(resultsByResponse.values()));
     } catch (error) {

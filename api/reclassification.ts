@@ -30,7 +30,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         JOIN responses r ON a1.r_uuid = r.uuid
         JOIN questions q ON r.q_uuid = q.uuid
         WHERE
-          a1.judge = ? AND a2.judge = ? AND (? IS NULL OR q.theme = ?) AND (? IS NULL OR r.model = ?)
+          a1.judge = ? AND a2.judge = ? AND (? IS NULL OR q.theme = ?) AND (? IS NULL OR r.model = ?) AND r.uuid NOT IN (
+            SELECT r_uuid FROM assessments WHERE judge = 'pitti/pap'
+          )
         GROUP BY 
           judge1_compliance, 
           judge2_compliance;
