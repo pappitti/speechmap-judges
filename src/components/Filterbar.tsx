@@ -28,57 +28,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
   return (
     <div className="filter-bar">
-      <div className="filter-group">
-        <div className="filter-block">
-          <label className="filter-label" htmlFor='theme-select'>Theme</label>
-          <select 
-            className="filter-select"
-            id='theme-select'
-            value={selectedTheme}
-            onChange={(e) => onThemeChange(e.target.value)}
-          >
-            <option value="">All Themes</option>
-            {themes.map((theme) => (
-              <option key={theme.slug} value={theme.slug}>
-                {theme.slug} ({theme.name})
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="filter-block">
-          <label className="filter-label" htmlFor='model-select'>Model</label>
-          <select 
-            className="filter-select"
-            id='model-select'
-            value={selectedModel}
-            onChange={(e) => onModelChange(e.target.value)}
-          >
-            <option value="">All Models</option>
-            {models.map((model) => (
-              <option key={model.model} value={model.model}>
-                {model.model}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="filter-block">
-          <label className="filter-label" htmlFor='model-family-select'>Model Family</label>
-          <select 
-            className="filter-select"
-            id='model-family-select'
-            value={selectedModelFamily}
-            onChange={(e) => onModelFamilyChange(e.target.value)}
-          >
-            <option value="">All Families</option>
-            {modelFamilies.map((family) => (
-              <option key={family.family} value={family.family}>
-                {family.family}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
       
       <div className="filter-group">
         <div className="filter-block">
@@ -112,23 +61,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 <option key={classification} value={classification}>
                   {classification}
                 </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="filter-block">
-          <label className="filter-label" htmlFor='provider-select'>Provider</label>
-          <select 
-            className="filter-select"
-            id='provider-select'
-            value={selectedProvider}
-            onChange={(e) => onProviderChange(e.target.value)}
-          >
-            <option value="">All Providers</option>
-            {providers.map((provider) => (
-              <option key={provider.provider} value={provider.provider}>
-                {provider.provider}
-              </option>
             ))}
           </select>
         </div>
@@ -169,6 +101,79 @@ const FilterBar: React.FC<FilterBarProps> = ({
             ))}
           </select>
         </div>
+      </div>
+      
+      <div className="filter-group">
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='model-select'>Model</label>
+          <select 
+            className="filter-select"
+            id='model-select'
+            value={selectedModel}
+            onChange={(e) => onModelChange(e.target.value)}
+          >
+            <option value="">All Models</option>
+            {models.map((model) => (
+              <option key={model.model} value={model.model}>
+                {model.model}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='model-family-select'>Model Family</label>
+          <select 
+            className="filter-select"
+            id='model-family-select'
+            value={selectedModelFamily}
+            onChange={(e) => onModelFamilyChange(e.target.value)}
+          >
+            <option value="">All Families</option>
+            {modelFamilies.map((family) => (
+              <option key={family.family} value={family.family}>
+                {family.family}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      
+      <div className="filter-group">
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='theme-select'>Theme</label>
+          <select 
+            className="filter-select"
+            id='theme-select'
+            value={selectedTheme}
+            onChange={(e) => onThemeChange(e.target.value)}
+          >
+            <option value="">All Themes</option>
+            {themes.map((theme) => (
+              <option key={theme.slug} value={theme.slug}>
+                {theme.slug} ({theme.name})
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='provider-select'>Provider</label>
+          <select 
+            className="filter-select"
+            id='provider-select'
+            value={selectedProvider}
+            onChange={(e) => onProviderChange(e.target.value)}
+          >
+            <option value="">All Providers</option>
+            {providers.map((provider) => (
+              <option key={provider.provider} value={provider.provider}>
+                {provider.provider}
+              </option>
+            ))}
+          </select>
+        </div>
+
       </div>
     </div>
   );

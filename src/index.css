@@ -923,7 +923,14 @@ h4 {
   animation: spin-and-pulse 2s linear infinite;
 }
 
+
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .filter-bar {
+  grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 1200px) {
   /* .charts-container {
     grid-template-columns: 1fr;
@@ -997,7 +1004,19 @@ h4 {
 
   .sankey-container, .heatmap-container {
     padding: 1rem;
-    min-width: 330px;
+    min-width: 300px;
+  }
+
+  .x-ticks, .heatmap-row {
+    grid-template-columns: repeat(auto-fit, minmax(25px, 1fr));
+  }
+
+  .x-tick {
+    font-size: 0.65rem;
+  } 
+
+  .cell-value {
+    font-size: 0.65rem;
   }
 
   .assessment-items {
