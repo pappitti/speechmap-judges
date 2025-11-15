@@ -10,8 +10,8 @@ license: apache-2.0
 short_description: LLM moderation profiles and judges classification
 datasets:
   - PITTI/speechmap-questions
-  - PITTI/speechmap-responses-v2
-  - PITTI/speechmap-assessments-v2
+  - PITTI/speechmap-responses-v3
+  - PITTI/speechmap-assessments-v3
 ---
 
 # LLM Assessment Explorer
