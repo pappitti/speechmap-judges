@@ -571,6 +571,7 @@ button {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .meta-tag {
@@ -581,6 +582,8 @@ button {
   border-radius: 20px;
   font-size: 0.875rem;
   font-weight: 500;
+  overflow: hidden;
+  max-width: 100%;
 }
 
 .meta-tag.theme {
@@ -624,6 +627,7 @@ h4 {
   border-radius: 8px;
   padding: 1.5rem;
   border: 1px solid #e5e7eb;
+  max-width: 100%;
 }
 
 .assessment-header {
@@ -692,6 +696,12 @@ h4 {
   color: #6b7280;
   line-height: 1.6;
   font-size: 0.875rem;
+}
+
+.assessment-analysis pre {
+  white-space: pre-wrap;      /* Preserves newlines and spaces, but wraps text */
+  word-wrap: break-word;      /* Deprecated, but good fallback */
+  overflow-wrap: break-word;  /* Breaks long words that would otherwise overflow */
 }
 
 .third-assessment {
@@ -988,6 +998,18 @@ h4 {
   .sankey-container, .heatmap-container {
     padding: 1rem;
     min-width: 330px;
+  }
+
+  .assessment-items {
+    padding: 1rem;
+  }
+
+  .assessment-item {
+    padding: 1rem;
+  }
+
+  .assessment {
+    max-width: 100%;
   }
 }
 

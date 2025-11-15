@@ -40,6 +40,14 @@ export interface Model {
   model:string;
 }
 
+export interface ModelFamily {
+  family:string;
+}
+
+export interface Provider {
+  provider:string;
+}
+
 export interface Judges {
   name: string;
   judge_type: string; // human or LLM
@@ -75,6 +83,7 @@ export interface AssessmentItem {
   r_uuid: string; 
   response: string;
   model: string;
+  provider: string;
   assessments: Record<string,JudgeAssessment>;
 }
 
@@ -82,10 +91,16 @@ export interface FilterBarProps {
   themes: Theme[];
   judges: Judges[];
   models: Model[];
+  modelFamilies: ModelFamily[];
+  providers: Provider[];
   selectedTheme: string;
   onThemeChange: (value: string) => void;
   selectedModel: string;
   onModelChange: (value: string) => void;
+  selectedModelFamily: string;
+  onModelFamilyChange: (value: string) => void;
+  selectedProvider: string;
+  onProviderChange: (value: string) => void;
   selectedJudge1: SelectedJudge | null;
   selectedJudge2: SelectedJudge | null;
   onJudge1NameChange : (value: string) => void;

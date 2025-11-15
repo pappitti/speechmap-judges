@@ -1,4 +1,4 @@
-import type { Theme, Judges, Model, TransitionMatrix, AssessmentItem, ApiError } from '../types.js';
+import type { Theme, Judges, Model, ModelFamily, Provider, TransitionMatrix, AssessmentItem, ApiError } from '../types.js';
 
 
 
@@ -17,11 +17,9 @@ async function fetchAPI<T>(url: string, options?: RequestInit): Promise<T> {
 
 
 // --- API Functions ---
-
 export const getThemes = (): Promise<Theme[]> => {
   return fetchAPI<Theme[]>('/api/themes');
 };
-
 
 export const getJudges = async (): Promise<Judges[]> => {
   return fetchAPI<Judges[]>('/api/judges')
@@ -31,6 +29,13 @@ export const getModels = async (): Promise<Model[]> => {
   return fetchAPI<Model[]>('/api/models')
 }
 
+export const getModelFamilies = async (): Promise<ModelFamily[]> => {
+  return fetchAPI<ModelFamily[]>('/api/models_families')
+}
+
+export const getProviders = async (): Promise<Provider[]> => {
+  return fetchAPI<Provider[]>('/api/providers')
+}
 
 export const getReclassificationData = (
   judge1: string,
@@ -38,7 +43,9 @@ export const getReclassificationData = (
   judge2: string,
   judge2Classification: string,
   theme?: string,
-  model?: string
+  model?: string,
+  modelFamily?: string,
+  provider?: string
 ): Promise<TransitionMatrix> => {
   // Build the query string from the parameters
   const params = new URLSearchParams({
@@ -55,6 +62,12 @@ export const getReclassificationData = (
   if (model) {
     params.append('model', model);
   }
+  if (modelFamily) {
+    params.append('modelFamily', modelFamily);
+  }
+  if (provider) {
+    params.append('provider', provider);
+  }
 
   return fetchAPI<TransitionMatrix>(`/api/reclassification?${params.toString()}`);
 };
@@ -68,7 +81,9 @@ export const getAssessmentItems = (
   judge2Classification: string,
   toCategory: string,
   theme?: string,
-  model?: string
+  model?: string,
+  modelFamily?: string,
+  provider?: string
 ): Promise<any[]> => {
 
   const params = new URLSearchParams({
@@ -77,7 +92,7 @@ export const getAssessmentItems = (
     fromCategory,
     judge2,
     judge2Classification,
-    toCategory,
+    toCategory
   });
 
   if (theme) {
@@ -85,6 +100,12 @@ export const getAssessmentItems = (
   }
   if (model) {
     params.append('model', model);
+  }
+  if (modelFamily) {
+    params.append('modelFamily', modelFamily);
+  }
+  if (provider) {
+    params.append('provider', provider);
   }
 
   return fetchAPI<AssessmentItem[]>(`/api/mismatches?${params.toString()}`);

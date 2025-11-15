@@ -6,7 +6,7 @@ const CATEGORY_SORT_MAP = new Map(
   SORTED_CATEGORIES.map((category, index) => [category, index])
 );
 
-const SORTED_MODELS = ["openai/gpt-4o-2024-11-20", "mistral-small-3.2-24b-instruct-2506-q8", "mistral-small-3.1-24b-instruct-2503", 'pitti/pap'];
+const SORTED_MODELS = ["openai/gpt-4o-2024-11-20", "mistral-small-3.2-24b-instruct-2506-q8", "Qwen3-Next-80B-A3B-Instruct-8bit", "deepseek-chat-v3.2", "gemma-3-27b-it", "pitti/pap", "mistral-small-3.1-24b-instruct-2503"];
 
 const MODEL_SORT_MAP = new Map(
   SORTED_MODELS.map((model, index) => [model, index])

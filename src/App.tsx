@@ -3,9 +3,9 @@ import { useState, useEffect} from 'react';
 import SankeyDiagram from './components/Sankey.js';
 import Heatmap from './components/Heatmap.js';
 import AssessmentItems from './components/itemList.js';
-import { getThemes, getJudges, getReclassificationData, getAssessmentItems, getModels } from './utils/apiUtils.js';
+import { getThemes, getJudges, getModelFamilies, getProviders, getReclassificationData, getAssessmentItems, getModels } from './utils/apiUtils.js';
 import { modelSort } from './utils/chartUtils.js';
-import type { Theme, Judges, Model, SelectedJudge, TransitionMatrix, AssessmentItem } from './types';
+import type { Theme, Judges, Model, ModelFamily, Provider, SelectedJudge, TransitionMatrix, AssessmentItem } from './types';
 import FilterBar from './components/Filterbar';
 
 function App() {
@@ -13,6 +13,8 @@ function App() {
   const [themes, setThemes] = useState<Theme[]>([]);
   const [judges, setJudges] = useState<Judges[]>([]);
   const [models, setModels] = useState<Model[]>([]);
+  const [modelFamilies, setModelFamilies] = useState<ModelFamily[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([]);
   const [matrix, setMatrix] = useState<TransitionMatrix | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +22,8 @@ function App() {
 
   const [selectedTheme, setSelectedTheme] = useState<string>('');
   const [selectedModel, setSelectedModel] = useState<string>('');
+  const [selectedModelFamily, setSelectedModelFamily] = useState<string>('');
+  const [selectedProvider, setSelectedProvider] = useState<string>('');
   const [selectedJudge1, setSelectedJudge1] = useState<SelectedJudge | null >(null);
   const [selectedJudge2, setSelectedJudge2] = useState<SelectedJudge | null >(null);
   const [selectedCategory, setSelectedCategory] = useState<string[] | null>(null);
@@ -33,14 +37,18 @@ function App() {
   useEffect(() => {
     const loadFilters = async () => {
       try {
-        const [themesData, judgesData, modelsData] = await Promise.all([
+        const [themesData, judgesData, modelsData, modelFamiliesData, providersData] = await Promise.all([
           getThemes(),
           getJudges(),
-          getModels()
+          getModels(),
+          getModelFamilies(),
+          getProviders(),
         ]);
         setThemes(themesData);
         setJudges(judgesData.sort(modelSort));
         setModels(modelsData);
+        setModelFamilies(modelFamiliesData);
+        setProviders(providersData);
 
         // Set default selections
         if (judgesData.length >= 2) {
@@ -77,7 +85,9 @@ function App() {
           selectedJudge2.name,
           selectedJudge2.classification,
           selectedTheme,
-          selectedModel
+          selectedModel,
+          selectedModelFamily,
+          selectedProvider
         );
         setMatrix(result);
         setSelectedItems([]); 
@@ -90,7 +100,7 @@ function App() {
     };
 
     fetchData();
-  }, [selectedTheme, selectedJudge1, selectedJudge2, selectedModel]);
+  }, [selectedTheme, selectedJudge1, selectedJudge2, selectedModel, selectedModelFamily, selectedProvider]);
 
   const handleJudge1NameChange = (newName: string) => {
     const newJudge = judges.find(j => j.name === newName);
@@ -138,7 +148,9 @@ function App() {
           selectedJudge2.classification,
           toCategory, 
           selectedTheme,
-          selectedModel
+          selectedModel,
+          selectedModelFamily,
+          selectedProvider
         )
         setSelectedItems(items);
         setSelectedCategory([fromCategory, toCategory]);
@@ -171,10 +183,16 @@ function App() {
             themes={themes}
             judges={judges}
             models={models}
+            modelFamilies={modelFamilies}
+            providers={providers}
             selectedTheme={selectedTheme}
             onThemeChange={setSelectedTheme}
             selectedModel={selectedModel}
             onModelChange={setSelectedModel}
+            selectedModelFamily={selectedModelFamily}
+            onModelFamilyChange={setSelectedModelFamily}
+            selectedProvider={selectedProvider}
+            onProviderChange={setSelectedProvider}
             selectedJudge1={selectedJudge1}
             selectedJudge2={selectedJudge2}
             onJudge1NameChange={handleJudge1NameChange}

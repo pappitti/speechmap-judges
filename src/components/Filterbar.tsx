@@ -1,4 +1,4 @@
-import type { FilterBarProps, Judges, Model } from '../types.js';
+import type { FilterBarProps, Judges } from '../types.js';
 
 const findJudgeByName = (judges: Judges[], name: string) => judges.find(j => j.name === name);
 
@@ -6,10 +6,16 @@ const FilterBar: React.FC<FilterBarProps> = ({
   themes,
   judges,
   models,
+  modelFamilies,
+  providers,
   selectedTheme,
   onThemeChange,
   selectedModel,
   onModelChange,
+  selectedModelFamily,
+  onModelFamilyChange,
+  selectedProvider,
+  onProviderChange,
   selectedJudge1,
   selectedJudge2,
   onJudge1NameChange,
@@ -55,6 +61,23 @@ const FilterBar: React.FC<FilterBarProps> = ({
             ))}
           </select>
         </div>
+
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='model-family-select'>Model Family</label>
+          <select 
+            className="filter-select"
+            id='model-family-select'
+            value={selectedModelFamily}
+            onChange={(e) => onModelFamilyChange(e.target.value)}
+          >
+            <option value="">All Families</option>
+            {modelFamilies.map((family) => (
+              <option key={family.family} value={family.family}>
+                {family.family}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
       
       <div className="filter-group">
@@ -89,6 +112,23 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 <option key={classification} value={classification}>
                   {classification}
                 </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="filter-block">
+          <label className="filter-label" htmlFor='provider-select'>Provider</label>
+          <select 
+            className="filter-select"
+            id='provider-select'
+            value={selectedProvider}
+            onChange={(e) => onProviderChange(e.target.value)}
+          >
+            <option value="">All Providers</option>
+            {providers.map((provider) => (
+              <option key={provider.provider} value={provider.provider}>
+                {provider.provider}
+              </option>
             ))}
           </select>
         </div>

@@ -8,10 +8,10 @@ const ROOT_DIR = process.cwd(); // cwd() = Current Working Directory
 const DB_PATH = path.join(ROOT_DIR, 'database.duckdb');
 
 export const DATA_SOURCES = {
+  models : 'https://huggingface.co/datasets/PITTI/speechmap-models/resolve/main/all_models.parquet',
   questions: 'https://huggingface.co/datasets/PITTI/speechmap-questions/resolve/main/consolidated_questions.parquet',
-  responses: 'https://huggingface.co/datasets/PITTI/speechmap-responses-v2/resolve/main/consolidated_responses.parquet',
-  assessments: 'https://huggingface.co/datasets/PITTI/speechmap-assessments-v2/resolve/main/consolidated_assessments.parquet',
-  // manual : './data/manual_assessments.parquet',// Local file for manual assessments
+  responses: 'https://huggingface.co/datasets/PITTI/speechmap-responses-v3/resolve/main/consolidated_responses.parquet',
+  assessments: 'https://huggingface.co/datasets/PITTI/speechmap-assessments-v3/resolve/main/consolidated_assessments.parquet',
   // reviewed : './data/reviewed_assessments.parquet' // Local file for reviewed assessments
 };
 
@@ -44,10 +44,12 @@ async function rebuildDatabase() {
 
     console.log('Creating database schema...');
     await query(db, `
-        CREATE TABLE themes (slug VARCHAR PRIMARY KEY, name VARCHAR);
-        CREATE TABLE questions (uuid VARCHAR PRIMARY KEY, id VARCHAR, category VARCHAR, domain VARCHAR, question VARCHAR, theme VARCHAR);
-        CREATE TABLE responses (uuid VARCHAR PRIMARY KEY, q_uuid VARCHAR, model VARCHAR, timestamp VARCHAR, api_provider VARCHAR, provider VARCHAR, content VARCHAR, matched BOOLEAN, origin VARCHAR);
-        CREATE TABLE assessments (uuid VARCHAR PRIMARY KEY, q_uuid VARCHAR, r_uuid VARCHAR, judge VARCHAR, judge_type VARCHAR, judge_analysis VARCHAR, compliance VARCHAR, pitti_compliance VARCHAR, origin VARCHAR);
+      CREATE TABLE models (name VARCHAR PRIMARY KEY, family VARCHAR);
+      CREATE TABLE themes (slug VARCHAR PRIMARY KEY, name VARCHAR);
+      CREATE TABLE questions (uuid VARCHAR PRIMARY KEY, id VARCHAR, category VARCHAR, domain VARCHAR, question VARCHAR, theme VARCHAR);
+      CREATE TABLE responses (uuid VARCHAR PRIMARY KEY, q_uuid VARCHAR, model VARCHAR, timestamp VARCHAR, api_provider VARCHAR, provider VARCHAR, content VARCHAR, matched BOOLEAN, origin VARCHAR);
+      CREATE TABLE assessments (uuid VARCHAR PRIMARY KEY, q_uuid VARCHAR, r_uuid VARCHAR, judge VARCHAR, judge_type VARCHAR, judge_analysis VARCHAR, compliance VARCHAR, pitti_compliance VARCHAR, origin VARCHAR);
+        
     `);
     console.log('Schema created.');
 
@@ -59,6 +61,12 @@ async function rebuildDatabase() {
     await query(db, `CREATE INDEX idx_responses_q_uuid ON responses (q_uuid);`);
     await query(db, `CREATE INDEX idx_questions_theme ON questions (theme);`);
     console.log('Indexes created.');
+
+    console.log('Ingesting models...');
+    await query(db, `
+        INSERT INTO models (name, family)
+        SELECT name, family FROM read_parquet('${DATA_SOURCES.models}');
+    `);
 
     console.log('Ingesting themes and questions...');
     await query(db, `
@@ -81,26 +89,7 @@ async function rebuildDatabase() {
         SELECT uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin FROM read_parquet('${DATA_SOURCES.assessments}');
     `);
 
-    // console.log('Updating manual assessments from local parquet file...');
-    // const manualDataPath = path.resolve(ROOT_DIR, DATA_SOURCES.manual);
-    // if (fs.existsSync(manualDataPath)) {
-    //   await query(db, `
-    //     INSERT INTO assessments (uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin)
-    //     SELECT uuid, q_uuid, r_uuid, judge, judge_type, judge_analysis, compliance, pitti_compliance, origin FROM read_parquet('${manualDataPath}')
-    //     ON CONFLICT (uuid) DO UPDATE SET
-    //         q_uuid = excluded.q_uuid,
-    //         r_uuid = excluded.r_uuid,
-    //         judge = excluded.judge,
-    //         judge_type = excluded.judge_type,
-    //         judge_analysis = excluded.judge_analysis,
-    //         compliance = excluded.compliance,
-    //         pitti_compliance = excluded.pitti_compliance,
-    //         origin = excluded.origin;
-    // `);
-    // } else {
-    //   console.warn(`Manual assessments file not found at ${manualDataPath}, skipping...`);
-    // }
-
+    // EXAMPLE: Ingest reviewed assessments from local Parquet file (if exists)
     // console.log('Updating reviewed assessments from local parquet file...');
     // const reviewedDataPath = path.resolve(ROOT_DIR, DATA_SOURCES.reviewed);
     // if (fs.existsSync(reviewedDataPath)) {

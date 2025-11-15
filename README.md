@@ -34,9 +34,9 @@ This application explores datasets derived from xlr8harder's [Speechmap](https:/
 
 The underlying dataset from HuggingFace includes:
 *   **2.4k questions**: [speechmap-questions](https://huggingface.co/datasets/PITTI/speechmap-questions)
-*   **336k responses**: [speechmap-responses](https://huggingface.co/datasets/PITTI/speechmap-responses-v2)
-*   **875k LLM-judge assessments**: [speechmap-assessments](https://huggingface.co/datasets/PITTI/speechmap-assessments-v2)
-    *   The assessment dataset combines the original assessments from `gpt-4o`, a new set from `mistral-small-3.1-2503`, a new set from `mistral-small-3.2-2506` and some manual annotations.
+*   **369k responses**: [speechmap-responses](https://huggingface.co/datasets/PITTI/speechmap-responses-v3)
+*   **2.07k LLM-judge assessments**: [speechmap-assessments](https://huggingface.co/datasets/PITTI/speechmap-assessments-v3)
+    *   The assessment dataset combines the original assessments from the Speechmap project by `gpt-4o`, assessments by `mistral-small-3.1-2503`, `mistral-small-3.2-2506`, `gemma3-27b-it`, `deepseek-v3.2`, `qwen3-next-80B-A3B-instruct` and manual annotations.
 
 ## Quick Start
 

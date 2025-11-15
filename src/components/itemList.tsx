@@ -216,7 +216,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
       </div>
       
       <div className="item-answer">
-        <h4>LLM Response ({item.model})</h4>
+        <h4>LLM Response ({item.model}{item.provider ? ` - ${item.provider}` : ''})</h4>
         <div className='markdown-content'><ReactMarkdown>{item.response}</ReactMarkdown></div>
       </div>
 
@@ -257,7 +257,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
       </div>
 
         {/* HUMAN ASSESSMENT */}
-      <div className="third-assessment">
+      {/*<div className="third-assessment">
         <div>
           <h4>Provide Human Assessment</h4>
           <p className="assessment-hint">Click to copy assessment info for response ID: <code>{item.r_uuid}</code></p>
@@ -293,7 +293,7 @@ const AssessmentItem: React.FC<AssessmentItemProps> = memo(({
             {copied ? '✓ Copied!' : 'Copy'}
           </button>
         </div>
-      )}
+      )} */}
        {/* HUMAN ASSESSMENT */}
     </div>
   );

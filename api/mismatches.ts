@@ -12,6 +12,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const j2_compliance = url.searchParams.get('toCategory');
     const theme = url.searchParams.get('theme') || null;
     const model = url.searchParams.get('model') || null;
+    const modelFamily = url.searchParams.get('modelFamily') || null;
+    const apiProvider = url.searchParams.get('provider') || null;
 
     if (!judge1 || !j1_compliance || !judge2 || !j2_compliance || !judge1Classification || !judge2Classification) {
         return jsonResponse(res, 400, { error: 'judge1, j1_compliance, judge2, and j2_compliance are required.' });
@@ -22,47 +24,6 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     
     try {
-        // const sql = `
-        //     WITH MismatchedResponses AS (
-        //         SELECT a.r_uuid
-        //         FROM assessments a
-        //         JOIN responses r ON a.r_uuid = r.uuid
-        //         JOIN questions q ON r.q_uuid = q.uuid
-        //         WHERE 
-        //             a.judge IN (?, ?) AND
-        //             (? IS NULL OR q.theme = ?)
-        //         GROUP BY a.r_uuid
-        //         HAVING
-        //             SUM(CASE WHEN a.judge = ? AND a.${judge1Classification} = ? THEN 1 ELSE 0 END) > 0
-        //             AND
-        //             SUM(CASE WHEN a.judge = ? AND a.${judge2Classification} = ? THEN 1 ELSE 0 END) > 0
-        //     )
-        //     SELECT
-        //         r.uuid as r_uuid,
-        //         q.question,
-        //         q.theme as question_theme,
-        //         q.domain as question_domain,
-        //         r.model as response_model,
-        //         r.content as response_content,
-        //         a.judge,
-        //         a.${judge1Classification},
-        //         ${judge1Classification!=judge2Classification? `a.${judge2Classification}`:''}
-        //         a.judge_analysis
-        //     FROM MismatchedResponses mr
-        //     JOIN responses r ON mr.r_uuid = r.uuid
-        //     JOIN questions q ON r.q_uuid = q.uuid
-        //     JOIN assessments a ON mr.r_uuid = a.r_uuid
-        //     WHERE
-        //         a.judge IN (?, ?) -- Only get assessments from the two judges in question
-        //     ORDER BY r.uuid;
-        // `;
-        // const params = [
-        //     judge1, judge2,  
-        //     theme, theme,
-        //     judge1, j1_compliance, 
-        //     judge2, j2_compliance,
-        //     judge1, judge2
-        // ];
 
         const sql = `
             SELECT
@@ -72,6 +33,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
                 q.theme AS question_theme,
                 q.domain AS question_domain,
                 r.model AS response_model,
+                r.provider AS provider,
                 r.content AS response_content,
 
                 a1.judge AS judge1_name,
@@ -89,6 +51,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
             -- Join to get response and question details
             JOIN responses r ON a1.r_uuid = r.uuid
             JOIN questions q ON r.q_uuid = q.uuid
+            JOIN models m ON r.model = m.name
             
             WHERE
                 -- Filter for the first judge's specific assessment
@@ -97,15 +60,18 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
                 -- Filter for the second judge's specific assessment
                 AND a2.judge = ? AND a2.${judge2Classification} = ?
                 
-                -- Optional theme filter and model filter
-                AND (? IS NULL OR q.theme = ?) AND (? IS NULL OR r.model = ?);
+                -- Optional theme, model, family and provider filter
+                AND (? IS NULL OR q.theme = ?) AND (? IS NULL OR r.model = ?) 
+                AND (? IS NULL OR m.family = ?) AND (? IS NULL OR r.provider = ?);
         `;
 
         const params = [
             judge1, j1_compliance,
             judge2, j2_compliance,
             theme, theme,
-            model, model
+            model, model,
+            modelFamily, modelFamily,
+            apiProvider, apiProvider
         ];
 
         const rows = await db.query<any>(sql, ...params);
@@ -122,6 +88,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
                     model: row.response_model,
                     r_uuid: row.r_uuid,
                     response: row.response_content,
+                    provider: row.provider,
                     assessments: {},
                 });
             }
